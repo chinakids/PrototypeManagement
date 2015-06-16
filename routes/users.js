@@ -1,23 +1,25 @@
 var express = require('express');
+var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var router = express.Router();
 var crypto = require('crypto');
 var querystring = require('querystring');
 var _ = require('underscore');
-var mongoose = require('mongoose');
 var usermodel = require('../models/users');
 
-mongoose.connect('mongodb://127.0.0.1:27017/test');
 
+
+/* md5加密 */
 function md5(str){
   var md5 = crypto.createHash('md5');
   var d2 = md5.update(str).digest('hex');
-  console.log(d2);
+  //console.log(d2);
   return d2;
 }
 
 /* 用户模块 */
 router.get('/', function(req, res, next) {
+  console.log(req);
   if(req.session.isVisit) {
     req.session.isVisit++;
     res.send('<p>第 ' + req.session.isVisit + '次来此页面</p>');
@@ -37,30 +39,39 @@ router.post('/edit',function(req, res, next) {
 /* 登陆模块 */
 router.get('/login', function(req, res, next) {
   //res.redirect('/');
-  res.render('login', { title: 'logins' });
+  var name = req.cookies.name;
+  var connectid = req.cookies['connect.id'];
+  var singename = req.cookies['name_sig'];
+  if(name != undefined){
+    if(md5(name+'this_is_mixin_string'+connectid) == singename){
+      res.redirect('/users');
+    }else{
+      res.render('login', { title: 'logins' });
+    }
+  }
 
 });
 router.post('/login', function(req, res, next) {
-  //res.send();
-  //console.log(crypto)
   /* 查询用户名并验证密码 */
-  //var content = '111111';
-  var d = '96e79218965eb72c92a549dd5a330112';
-  console.log(d);
-  var status = false;
-  if(md5(req.body.password) == d){
-    status = true;
-  }else{
-    status = false;
-  }
+  usermodel.findByName(req.body.username,function(err,user){
+    if(err){
+      console.log(err);
+    }
+    console.log(user);
+    if(user.length<=0){
+      res.status(200).send({status:0,info:'帐号或密码错误'});
+    }else{
+      if(md5(req.body.password) == user[0].passWord){
+        /* 设置登陆的cookie */
+        res.cookie('name', user[0].name , { maxAge: 60 * 1000 * 60 * 24 * 30 });
+        res.cookie('name_sig', md5(user[0].name+'this_is_mixin_string'+req.cookies['connect.id']) , { maxAge: 60 * 1000 * 60 * 24 * 30 });
+        res.status(200).send({status:1,data:{name:user[0].name}});
+      }else{
+        res.status(200).send({status:0,info:'帐号或密码错误'});
+      }
+    }
+  })
 
-  if(status){
-    /* 登录成功返回 */
-    res.status(200).send({status:1,data:{name:'戴捷'}});
-  }else{
-    /* 登录失败返回 */
-    res.status(200).send({status:0,info:'帐号或密码错误'});
-  }
 });
 /* 注册模块 */
 router.get('/register', function(req, res, next) {

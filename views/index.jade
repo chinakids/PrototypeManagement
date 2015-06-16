@@ -37,8 +37,14 @@ html(lang='zh')
       #header
         h1
         .btn-group
-          a.btn.btn-inverse(href='/users/login')
-            i.fa.fa-user.icon-white  登陆
+          if login == false
+            a.btn.btn-inverse(href='/users/login')
+              i.fa.fa-user.icon-white  登陆
+          else
+            a.btn.btn-inverse(href='/users')
+              i.fa.fa-cog.icon-white  [#{login.name}]管理中心
+            a.btn.btn-inverse(href='/users/logout')
+              i.fa.fa-sign-out.icon-white  退出
       #content
         #content-header
           h1.pull-left #{title}

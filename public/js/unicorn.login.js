@@ -79,7 +79,7 @@ $(document).ready(function() {
                         userbox.animate({'top':"+=75px",'opacity':'1'},250,function(){
                             setTimeout(function(){
                                 thisForm.unbind('submit').submit();
-                                window.location = './'
+                                window.location = './../'
                             },600);
                         });
                     });
