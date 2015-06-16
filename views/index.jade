@@ -1,0 +1,113 @@
+doctype html
+html(lang='zh')
+  head
+    title 产品原型管理中心
+    meta(charset='UTF-8')
+    link(rel="shortcut icon",href="/favicon.ico")
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/lib/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/css/font-awesome.css')
+    link(rel='stylesheet', href='/css/jquery-ui.css')
+    link(rel='stylesheet', href='/css/icheck/flat/blue.css')
+    link(rel='stylesheet', href='/css/select2.css')
+    link(rel='stylesheet', href='/css/unicorn.css')
+    //if lt IE 9
+      script(type='text/javascript', src='js/respond.min.js')
+    style.
+      #header h1{
+      width: 294px;
+      }
+      #content{
+      margin-left: 0;
+      margin-top: 39px;
+      }
+      #header .btn-group{
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      }
+      #content-header .input-group{
+      margin-top: 14px;
+      }
+      #content-header .input-group input{
+      border-radius: 4px 0 0 4px;
+      }
+  body.flat(data-color='grey')
+    #wrapper
+      #header
+        h1
+        .btn-group
+          a.btn.btn-inverse(href='/users/login')
+            i.fa.fa-user.icon-white  登陆
+      #content
+        #content-header
+          h1.pull-left #{title}
+          .col-lg-3.pull-right
+            .input-group
+              input.form-control(type='text', placeholder='搜索通过时间、名称、版本、状态或者产品经理')
+              span.input-group-btn
+                button.btn.btn-default(type='button') 搜索
+            // /input-group
+        .row
+          .col-xs-12
+            .widget-box
+              .widget-content.nopadding
+                table.table.table-bordered.table-striped.table-hover
+                  thead
+                    tr
+                      th.col-xs-1 时间
+                      th.col-xs-5 名称
+                      th.col-xs-1 项目版本
+                      th.col-xs-1 原型版本
+                      th.col-xs-1 状态
+                      th.col-xs-1 作者
+                      th.col-xs-2 操作
+                  tbody
+                    each item in data
+                      tr
+                        td.text-center #{item.createTime}
+                        td #{item.name}
+                        td.text-center #{item.version}
+                        td.text-center #{item.codeVersion}
+                        if item.status == 0
+                          td.open
+                            span.badge 正常
+                        else if item.status == 1
+                          td.stop
+                            span.badge 修改中
+                        else if item.status == 2
+                          td.over
+                            span.badge 关闭
+                        else
+                          td.other
+                            span.badge 关闭
+                        td #{item.author}
+                        td.text-center
+                          a(href="#{item.url}",target="_blank") 查看
+            ul.pagination
+              li
+                a(href='#') 上一页
+              li.active
+                a(href='#') 1
+              li
+                a(href='#') 2
+              li
+                a(href='#') 3
+              li
+                a(href='#') 4
+              li
+                a(href='#') 下一页
+      .row
+        #footer.col-xs-12
+          | 2012 - 2013 &copy; Unicorn Admin. Brought to you by
+          a(href='#') chinakids
+    script(src='/lib/jquery/dist/jquery.min.js')
+    script(src='/lib/bootstrap/dist/js/bootstrap.min.js')
+    script(src='/js/jquery-ui.custom.js')
+    script(src='/js/bootstrap.min.js')
+    script(src='/js/jquery.icheck.min.js')
+    script(src='/js/select2.min.js')
+    script(src='/js/jquery.dataTables.min.js')
+    script(src='/js/jquery.nicescroll.min.js')
+    script(src='/js/unicorn.js')
+    script(src='/js/unicorn.tables.js')
