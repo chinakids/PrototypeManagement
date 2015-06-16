@@ -19,15 +19,27 @@ function md5(str){
 
 /* 用户模块 */
 router.get('/', function(req, res, next) {
-  console.log(req);
-  if(req.session.isVisit) {
-    req.session.isVisit++;
-    res.send('<p>第 ' + req.session.isVisit + '次来此页面</p>');
-  } else {
-    req.session.isVisit = 1;
-    res.send("欢迎第一次来这里");
-    console.log(req.session);
+  console.log('/')
+  var name = req.cookies.name;
+  var connectid = req.cookies['connect.id'];
+  var singename = req.cookies['name_sig'];
+  if(name != undefined){
+    if(md5(name+'this_is_mixin_string'+connectid) == singename){
+      res.send('<p>第 ' + req.session.isVisit + '次来此页面</p>');
+    }else{
+      res.redirect('/login')
+    }
+  }else{
+    res.redirect('/login')
   }
+  // if(req.session.isVisit) {
+  //   req.session.isVisit++;
+  //   res.send('<p>第 ' + req.session.isVisit + '次来此页面</p>');
+  // } else {
+  //   req.session.isVisit = 1;
+  //   res.send("欢迎第一次来这里");
+  //   console.log(req.session);
+  // }
   //res.render('users', { title: 'user' });
 });
 /* 用户数据提交 */
@@ -38,6 +50,7 @@ router.post('/edit',function(req, res, next) {
 })
 /* 登陆模块 */
 router.get('/login', function(req, res, next) {
+  //console.log('/login')
   //res.redirect('/');
   var name = req.cookies.name;
   var connectid = req.cookies['connect.id'];
@@ -48,6 +61,8 @@ router.get('/login', function(req, res, next) {
     }else{
       res.render('login', { title: 'logins' });
     }
+  }else{
+    res.render('login', { title: 'logins' });
   }
 
 });
@@ -71,7 +86,12 @@ router.post('/login', function(req, res, next) {
       }
     }
   })
-
+});
+/* 登出模块 */
+router.get('/logout', function(req, res, next) {
+  res.clearCookie('name');
+  res.clearCookie('name_sig');
+  res.redirect('/../');
 });
 /* 注册模块 */
 router.get('/register', function(req, res, next) {
