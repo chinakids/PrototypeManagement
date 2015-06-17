@@ -7,7 +7,6 @@ var crypto = require('crypto');
 var querystring = require('querystring');
 var _ = require('underscore');
 var formidable = require("formidable");
-var sys = require('sys');
 var fs = require('fs');
 var unzip = require('unzip');
 var usermodel = require('../models/users');
