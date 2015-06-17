@@ -19,7 +19,7 @@ html(lang='zh')
       }
       #content{
       margin-left: 0;
-      margin-top: 39px;
+      margin-top: 0;
       }
       #header .btn-group{
       position: absolute;
@@ -46,23 +46,19 @@ html(lang='zh')
             a.btn.btn-inverse(href='/users/logout')
               i.fa.fa-sign-out.icon-white  退出
       #content
-        #content-header
-          h1.pull-left #{title}
-          .col-lg-3.pull-right
-            .input-group
-              input.form-control(type='text', placeholder='搜索通过时间、名称、版本、状态或者产品经理')
-              span.input-group-btn
-                button.btn.btn-default(type='button') 搜索
-            // /input-group
         .row
           .col-xs-12
             .widget-box
+              .widget-title
+                span.icon
+                  i.fa.fa-th
+                h5 #{title}
               .widget-content.nopadding
-                table.table.table-bordered.table-striped.table-hover
+                table.table.table-bordered.table-striped.table-hover.data-table
                   thead
                     tr
-                      th.col-xs-1 时间
-                      th.col-xs-5 名称
+                      th.col-xs-2 时间
+                      th.col-xs-4 名称
                       th.col-xs-1 项目版本
                       th.col-xs-1 原型版本
                       th.col-xs-1 状态
@@ -71,7 +67,7 @@ html(lang='zh')
                   tbody
                     each item in data
                       tr
-                        td.text-center #{item.createTime}
+                        td.re-time.text-center(data-time="#{item.meta.updateAt}")
                         td #{item.name}
                         td.text-center #{item.version}
                         td.text-center #{item.codeVersion}
@@ -90,19 +86,6 @@ html(lang='zh')
                         td #{item.author}
                         td.text-center
                           a(href="#{item.url}",target="_blank") 查看
-            ul.pagination
-              li
-                a(href='#') 上一页
-              li.active
-                a(href='#') 1
-              li
-                a(href='#') 2
-              li
-                a(href='#') 3
-              li
-                a(href='#') 4
-              li
-                a(href='#') 下一页
       .row
         #footer.col-xs-12
           | 2012 - 2013 &copy; Unicorn Admin. Brought to you by
@@ -117,3 +100,15 @@ html(lang='zh')
     script(src='/js/jquery.nicescroll.min.js')
     script(src='/js/unicorn.js')
     script(src='/js/unicorn.tables.js')
+    script.
+      $(function(){
+        function formatTime(s){
+          var t = new Date(s);
+          var str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 "+t.getHours()+":"+t.getMinutes();
+          return str;
+        }
+        $('.re-time').each(function(){
+          var time = $(this).attr('data-time');
+          $(this).text(formatTime(time));
+        })
+      })

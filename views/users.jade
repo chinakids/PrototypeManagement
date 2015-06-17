@@ -1,4 +1,139 @@
-extends layout
-
-block content
-  h1= title
+doctype html
+html(lang='zh')
+  head
+    title 产品原型管理中心
+    meta(charset='UTF-8')
+    link(rel="shortcut icon",href="/favicon.ico")
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/lib/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/css/font-awesome.css')
+    link(rel='stylesheet', href='/css/jquery-ui.css')
+    link(rel='stylesheet', href='/css/icheck/flat/blue.css')
+    link(rel='stylesheet', href='/css/select2.css')
+    link(rel='stylesheet', href='/css/unicorn.css')
+    //if lt IE 9
+      script(type='text/javascript', src='js/respond.min.js')
+    style.
+      #header h1{
+      width: 294px;
+      }
+      #content{
+      margin-left: 0;
+      margin-top: 0;
+      }
+      #header .btn-group{
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      }
+      #content-header .input-group{
+      margin-top: 14px;
+      }
+      #content-header .input-group input{
+      border-radius: 4px 0 0 4px;
+      }
+      .nofilter .dataTables_filter{
+      display:none;
+      }
+  body.flat(data-color='grey')
+    #wrapper
+      #header
+        h1
+        .btn-group
+          a.btn.btn-inverse(href='/')
+            i.fa.fa-home.icon-white  原型首页
+          a.btn.btn-inverse(href='/')
+            i.fa.fa-plus.icon-white  创建产品
+          a.btn.btn-inverse(href='/')
+            i.fa.fa-plus.icon-white  创建原型
+          a.btn.btn-inverse(href='/users/logout')
+            i.fa.fa-sign-out.icon-white  退出
+      #content
+        .row
+          .col-xs-3
+            .widget-box
+              .widget-title
+                span.icon
+                  i.fa.fa-th
+                h5 产品列表
+              .widget-content.nopadding.nofilter
+                table.table.table-bordered.table-striped.table-hover.data-table
+                  thead
+                    tr
+                      th.col-xs-8 产品名称
+                      th.col-xs-4 操作
+                  tbody
+                    each item in data
+                      tr
+                        td(data-id="#{item._id}") #{item.name}
+                        td.text-center
+                          a(href="javascript:;") 删除
+                          | &nbsp;|&nbsp;
+                          a(href="javascript:;") 查看
+          .col-xs-9
+            .widget-box
+              .widget-title
+                span.icon
+                  i.fa.fa-th
+                h5 #{title}
+              .widget-content.nopadding
+                table.table.table-bordered.table-striped.table-hover.data-table
+                  thead
+                    tr
+                      th.col-xs-2 时间
+                      th.col-xs-4 名称
+                      th.col-xs-1 项目版本
+                      th.col-xs-1 原型版本
+                      th.col-xs-1 状态
+                      th.col-xs-1 作者
+                      th.col-xs-2 操作
+                  tbody
+                    each item in data
+                      tr
+                        td.re-time.text-center(data-time="#{item.meta.updateAt}")
+                        td #{item.name}
+                        td.text-center #{item.version}
+                        td.text-center #{item.codeVersion}
+                        if item.status == 0
+                          td.open
+                            span.badge 正常
+                        else if item.status == 1
+                          td.stop
+                            span.badge 修改中
+                        else if item.status == 2
+                          td.over
+                            span.badge 关闭
+                        else
+                          td.other
+                            span.badge 关闭
+                        td #{item.author}
+                        td.text-center
+                          a(href="#{item.url}",target="_blank") 查看
+                          | &nbsp;|&nbsp;
+                          a(href="javascript:;") 编辑
+      .row
+        #footer.col-xs-12
+          | 2012 - 2013 &copy; Unicorn Admin. Brought to you by
+          a(href='#') chinakids
+    script(src='/lib/jquery/dist/jquery.min.js')
+    script(src='/lib/bootstrap/dist/js/bootstrap.min.js')
+    script(src='/js/jquery-ui.custom.js')
+    script(src='/js/bootstrap.min.js')
+    script(src='/js/jquery.icheck.min.js')
+    script(src='/js/select2.min.js')
+    script(src='/js/jquery.dataTables.min.js')
+    script(src='/js/jquery.nicescroll.min.js')
+    script(src='/js/unicorn.js')
+    script(src='/js/unicorn.tables.js')
+    script.
+      $(function(){
+        function formatTime(s){
+          var t = new Date(s);
+          var str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 "+t.getHours()+":"+t.getMinutes();
+          return str;
+        }
+        $('.re-time').each(function(){
+          var time = $(this).attr('data-time');
+          $(this).text(formatTime(time));
+        })
+      })

@@ -6,7 +6,7 @@ var crypto = require('crypto');
 var querystring = require('querystring');
 var _ = require('underscore');
 var usermodel = require('../models/users');
-
+var productmodel = require('../models/products');
 
 
 /* md5加密 */
@@ -25,7 +25,15 @@ router.get('/', function(req, res, next) {
   var singename = req.cookies['name_sig'];
   if(name != undefined){
     if(md5(name+'this_is_mixin_string'+connectid) == singename){
-      res.send('<p>第 ' + req.session.isVisit + '次来此页面</p>');
+      productmodel.find(function(err,product){
+        if(err){
+          console.log(err);
+        }
+        res.render('users', {
+          title : '您的产品原型列表',
+          data  : product
+        });
+      })
     }else{
       res.redirect('/login')
     }
