@@ -74,13 +74,12 @@ router.get('/', function(req, res, next) {
 });
 /* 用户数据提交 */
 router.post('/editList',function(req, res, next) {
-  /* 包含新增和修改 */
+  /* 包含新增 */
   var name = req.cookies.name;
   var connectid = req.cookies['connect.id'];
   var singename = req.cookies['name_sig'];
   if(name != undefined){
     if(md5(name+'this_is_mixin_string'+connectid) == singename){
-      if(req.body.id == undefined || req.body.id == ''){
         /* 新增 */
         //console.log(req.body)
         _list = new listmodel({
@@ -93,28 +92,6 @@ router.post('/editList',function(req, res, next) {
           }
           res.send({status:1,info:'添加成功'});
         })
-      }else{
-        //console.log('修改')
-        /* 修改 */
-        var newObj = {
-          name       : req.body.name,
-          author     : name
-        };
-        //console.log(newObj)
-        listmodel.findBy(req.body.id,function(err,list){
-          if(err){
-            console.log(err);
-          }
-          _list = _.extend(list[0],newObj);
-          //console.log(_list);
-          _list.save(function(err, user){
-            if(err){
-              console.log(err);
-            }
-            res.send({status:1,info:'修改成功'});
-          })
-        })
-      }
     }else{
       res.redirect('/login')
     }
@@ -127,7 +104,7 @@ router.post('/editProduct',function(req, res, next) {
   form.parse(req, function(err, fields, files) {
       console.log(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop()));
       fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop())).pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()) }));
-      /* 包含新增和修改 */
+      /* 包含新增 */
       var name = req.cookies.name;
       var connectid = req.cookies['connect.id'];
       var singename = req.cookies['name_sig'];
@@ -162,6 +139,40 @@ router.post('/editProduct',function(req, res, next) {
         res.status(200).send({status:0,info:'请登录'})
       }
   });
+});
+router.post('/editStatus',function(req, res, next) {
+  /* 包含新增和修改 */
+  var name = req.cookies.name;
+  var connectid = req.cookies['connect.id'];
+  var singename = req.cookies['name_sig'];
+  if(name != undefined){
+    if(md5(name+'this_is_mixin_string'+connectid) == singename){
+        //console.log('修改')
+        /* 修改 */
+        var newObj = {
+          status       : req.body.status
+        };
+        //console.log(newObj)
+        productmodel.findBy(req.body.id,function(err,product){
+          if(err){
+            console.log(err);
+          }
+          _list = _.extend(product[0],newObj);
+          //console.log(_list);
+          _list.save(function(err, user){
+            if(err){
+              console.log(err);
+            }
+            res.send({status:1,info:'修改成功'});
+          })
+        })
+    }else{
+      res.redirect('/login')
+    }
+  }else{
+    res.send({status:0,info:'请登录'})
+  }
+  //res.status(200).send({'status':0}).end();
 });
 /* 登陆模块 */
 router.get('/login', function(req, res, next) {

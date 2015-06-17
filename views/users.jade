@@ -114,6 +114,8 @@ html(lang='zh')
                             span.badge 未知
                         td #{item.author}
                         td.text-center
+                          a.jq-edit-status(href="#edit-status",data-toggle="modal",target="_blank",data-id="#{item._id}",data-status="#{item.status}") 修改状态
+                          | &nbsp;&nbsp;|&nbsp;&nbsp;
                           a(href="#{item.url}",target="_blank") 查看
       div#add-list.modal.fade
         div.modal-dialog
@@ -127,7 +129,6 @@ html(lang='zh')
                   .widget-box(style="margin:0")
                     .widget-content.nopadding
                       form.form-horizontal
-                        input.jq-list-id(type='hidden',name='listId')
                         .form-group
                           label.col-sm-3.col-md-3.col-lg-2.control-label 产品名称
                           .col-sm-9.col-md-9.col-lg-10
@@ -147,7 +148,6 @@ html(lang='zh')
                   .widget-box(style="margin:0")
                     .widget-content.nopadding
                       form.form-horizontal
-                        input.jq-product-id(type='hidden',name='productId')
                         .form-group
                           label.col-sm-3.col-md-3.col-lg-2.control-label 产品
                           .col-sm-9.col-md-9.col-lg-10
@@ -183,6 +183,34 @@ html(lang='zh')
                                   div#picker 选择文件
             div.modal-footer
               a.btn.btn-primary.btn-small.jq-submit-product(href="javascript:;") 提交
+              a.btn.btn-default.btn-small(data-dismiss="modal",href="#") 取消
+      div#edit-status.modal.fade
+        div.modal-dialog
+          div.modal-content
+            div.modal-header
+              button.close(data-dismiss="modal",type="button") ×
+              h3 状态变更
+            div.modal-body
+              .row.nopadding
+                .col-xs-12.nopadding
+                  .widget-box(style="margin:0")
+                    .widget-content.nopadding
+                      form.form-horizontal
+                        .form-group
+                          input(type='hidden',name='editStatusId')
+                          label.col-sm-3.col-md-3.col-lg-2.control-label 状态
+                          .col-sm-9.col-md-9.col-lg-10
+                            label
+                              input(type='radio', name='editStatus',value='1', checked='')
+                              | 正常&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            label
+                              input(type='radio', name='editStatus',value='2')
+                              | 修改中&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            label
+                              input(type='radio', name='editStatus',value='3')
+                              | 关闭&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            div.modal-footer
+              a.btn.btn-primary.btn-small.jq-submit-editStatus(href="javascript:;") 提交
               a.btn.btn-default.btn-small(data-dismiss="modal",href="#") 取消
       .row
         #footer.col-xs-12
@@ -220,15 +248,56 @@ html(lang='zh')
         //-   $('input[name=listId]').val('');
         //-   $('input[name=listName]').val('');
         //- })
-        //- $('.jq-add-product').click(function(){
-        //-   $('input[name=productId]').val('');
-        //-   $('select[name=productList]').val('');
-        //-   $('select[name=productList] option').eq(0).attr('selected',true);
-        //-   $('input[name=productVersion]').val('');
-        //-   $('input[name=productCodeVersion]').val('');
-        //-   $('input[name=productStatus]:checked').val('');
-        //-   $('.jq-file').show();
-        //- })
+        $('.jq-add-product').click(function(){
+          $('select[name=productList]').val('');
+          $('select[name=productList] option').eq(0).attr('selected',true);
+          $('input[name=productVersion]').val('');
+          $('input[name=productCodeVersion]').val('');
+          $('input[name=productStatus]:checked').val('');
+          $('.jq-file').show();
+        })
+        $('.jq-edit-status').click(function(){
+          var id = $(this).attr('data-id'),
+              status = $(this).attr('data-status');
+          $('input[name=editStatusId]').val(id);
+          $('input[name=editStatus]').each(function(){
+            if($(this).val() == status){
+              $(this).prop('checked',true);
+            }
+          })
+        })
+        $('.jq-submit-editStatus').click(function(){
+          var status=$('input[name=editStatus]:checked').val() || 1,
+              id = $('input[name=editStatusId]').val();
+            $.post('/users/editStatus', {
+              'id': id,
+              'status': status
+            }, function(data, textStatus, xhr) {
+              if(data.status == 1){
+                window.location.reload();
+              }else{
+                alert(data.info);
+              }
+            }
+          )
+        })
+        var uploader = WebUploader.create({
+          // swf文件路径
+          swf:'/lib/fex-webuploader/dist/Uploader.swf',
+          // 文件接收服务端。
+          server: '/users/editProduct',
+          // 选择文件的按钮。可选。
+          // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+          pick: {
+            id : '#picker',
+            multiple : false
+          },
+          accept:{
+            extensions:'zip'
+          },
+          // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+          resize: false
+        });
         //- $('.jq-edit-list').click(function(){
         //-   var _id = $(this).attr('data-id'),
         //-       name = $(this).parent().siblings('.jq-list-name').text();
@@ -263,23 +332,6 @@ html(lang='zh')
             }
           )
         })
-        var uploader = WebUploader.create({
-          // swf文件路径
-          swf:'/lib/fex-webuploader/dist/Uploader.swf',
-          // 文件接收服务端。
-          server: '/users/editProduct',
-          // 选择文件的按钮。可选。
-          // 内部根据当前运行是创建，可能是input元素，也可能是flash.
-          pick: {
-            id : '#picker',
-            multiple : false
-          },
-          accept:{
-            extensions:'zip'
-          },
-          // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
-          resize: false
-        });
         $('.jq-submit-product').click(function(){
           var infoId = infoId = $('select[name=productList]').val();
           uploader.options.formData.id = $('input[name=productId]').val();
@@ -287,7 +339,7 @@ html(lang='zh')
           uploader.options.formData.infoName = $('select[name=productList]').find('option[value='+infoId+']').text(),
           uploader.options.formData.version = $('input[name=productVersion]').val(),
           uploader.options.formData.codeVersion = $('input[name=productCodeVersion]').val(),
-          uploader.options.formData.status = $('input[name=productStatus]:checked').val();
+          uploader.options.formData.status = $('input[name=productStatus]:checked').val() || 1;
           uploader.upload();
           //- var id = $('input[name=productId]').val(),
           //-     infoId = $('select[name=productList]').val(),
