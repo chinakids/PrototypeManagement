@@ -13,6 +13,8 @@ var ProductSchema = new mongoose.Schema({
   status     : Number,
   author     : String,
   url        : String,
+  fs_name    : String,
+  fs_path    : String,
   meta       : {
     createAt : {
       type      : Date,

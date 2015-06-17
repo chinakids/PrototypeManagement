@@ -6,6 +6,7 @@ html(lang='zh')
     link(rel="shortcut icon",href="/favicon.ico")
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='stylesheet', href='/lib/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/lib/fex-webuploader/dist/webuploader.css')
     link(rel='stylesheet', href='/css/font-awesome.css')
     link(rel='stylesheet', href='/css/jquery-ui.css')
     link(rel='stylesheet', href='/css/icheck/flat/blue.css')
@@ -73,8 +74,6 @@ html(lang='zh')
                       tr
                         td.jq-list-name(data-id="#{item._id}") #{item.name}
                         td.text-center
-                          a.pending.jq-edit-list(href='#add-list',data-toggle="modal",data-id="#{item._id}") 编辑
-                          | &nbsp;|&nbsp;
                           a(href="?i=#{item._id}&n=#{item.name}",data-id="#{item._id}") 查看原型
           .col-xs-9
             .widget-box
@@ -97,7 +96,7 @@ html(lang='zh')
                   tbody
                     each item in data
                       tr
-                        td.re-time.text-center(data-time="#{item.meta.updateAt}")
+                        td.re-time.text-center(data-time="#{item.meta.updateAt}") #{item.meta.updateAt}
                         td.jq-product-name(data-id="#{item.info.id}") #{item.info.name}
                         td.jq-product-version.text-center #{item.version}
                         td.jq-product-codeVersion.text-center #{item.codeVersion}
@@ -112,12 +111,10 @@ html(lang='zh')
                             span.badge 关闭
                         else
                           td.jq-product-status.other
-                            span.badge 关闭
+                            span.badge 未知
                         td #{item.author}
                         td.text-center
                           a(href="#{item.url}",target="_blank") 查看
-                          | &nbsp;|&nbsp;
-                          a.jq-edit-product(href='#add-product',data-toggle="modal",data-id="#{item._id}") 编辑
       div#add-list.modal.fade
         div.modal-dialog
           div.modal-content
@@ -180,7 +177,10 @@ html(lang='zh')
                         .form-group.jq-file
                           label.col-sm-3.col-md-3.col-lg-2.control-label 原型包
                           .col-sm-9.col-md-9.col-lg-10
-                            input(type='file',name='productFile',style='position: relative;top: 5px;')
+                            div#uploader.wu-example
+                              div#thelist.uploader-list
+                              div.btns
+                                  div#picker 选择文件
             div.modal-footer
               a.btn.btn-primary.btn-small.jq-submit-product(href="javascript:;") 提交
               a.btn.btn-default.btn-small(data-dismiss="modal",href="#") 取消
@@ -190,6 +190,7 @@ html(lang='zh')
           a(href='#') chinakids
     script(src='/lib/jquery/dist/jquery.min.js')
     script(src='/lib/bootstrap/dist/js/bootstrap.min.js')
+    script(src='/lib/fex-webuploader/dist/webuploader.min.js')
     script(src='/js/jquery-ui.custom.js')
     script(src='/js/bootstrap.min.js')
     script(src='/js/jquery.icheck.min.js')
@@ -209,38 +210,44 @@ html(lang='zh')
           var time = $(this).attr('data-time');
           $(this).text(formatTime(time));
         })
-        $('.jq-add-list').click(function(){
-          $('input[name=listId]').val('');
-          $('input[name=listName]').val('');
+        $('.dataTables_paginate .ui-button').click(function(){
+          $('.re-time').each(function(){
+            var time = $(this).attr('data-time');
+            $(this).text(formatTime(time));
+          })
         })
-        $('.jq-add-product').click(function(){
-          $('input[name=productId]').val('');
-          $('select[name=productList]').val('');
-          $('select[name=productList] option').eq(0).attr('selected',true);
-          $('input[name=productVersion]').val('');
-          $('input[name=productCodeVersion]').val('');
-          $('input[name=productStatus]:checked').val('');
-          $('.jq-file').show();
-        })
-        $('.jq-edit-list').click(function(){
-          var _id = $(this).attr('data-id'),
-              name = $(this).parent().siblings('.jq-list-name').text();
-          $('input[name=listId]').val(_id);
-          $('input[name=listName]').val(name);
-        })
-        $('.jq-edit-product').click(function(){
-          var _id = $(this).attr('data-id'),
-              infoId = $(this).parent().siblings('.jq-product-name').attr("data-id"),
-              version = $(this).parent().siblings('.jq-product-version').text(),
-              codeVersion = $(this).parent().siblings('.jq-product-codeVersion').text(),
-              status = $(this).parent().siblings('.jq-product-status').attr('data-status');
-          $('.jq-file').hide();
-          $('input[name=productId]').val(_id);
-          $('select[name=productList] option[value='+infoId+']').attr('selected',true);
-          $('input[name=productVersion]').val(version);
-          $('input[name=productCodeVersion]').val(codeVersion);
-          $('input[name=productStatus]').eq(status-1).prop('checked',true);
-        })
+        //- $('.jq-add-list').click(function(){
+        //-   $('input[name=listId]').val('');
+        //-   $('input[name=listName]').val('');
+        //- })
+        //- $('.jq-add-product').click(function(){
+        //-   $('input[name=productId]').val('');
+        //-   $('select[name=productList]').val('');
+        //-   $('select[name=productList] option').eq(0).attr('selected',true);
+        //-   $('input[name=productVersion]').val('');
+        //-   $('input[name=productCodeVersion]').val('');
+        //-   $('input[name=productStatus]:checked').val('');
+        //-   $('.jq-file').show();
+        //- })
+        //- $('.jq-edit-list').click(function(){
+        //-   var _id = $(this).attr('data-id'),
+        //-       name = $(this).parent().siblings('.jq-list-name').text();
+        //-   $('input[name=listId]').val(_id);
+        //-   $('input[name=listName]').val(name);
+        //- })
+        //- $('.jq-edit-product').click(function(){
+        //-   var _id = $(this).attr('data-id'),
+        //-       infoId = $(this).parent().siblings('.jq-product-name').attr("data-id"),
+        //-       version = $(this).parent().siblings('.jq-product-version').text(),
+        //-       codeVersion = $(this).parent().siblings('.jq-product-codeVersion').text(),
+        //-       status = $(this).parent().siblings('.jq-product-status').attr('data-status');
+        //-   $('.jq-file').hide();
+        //-   $('input[name=productId]').val(_id);
+        //-   $('select[name=productList] option[value='+infoId+']').attr('selected',true);
+        //-   $('input[name=productVersion]').val(version);
+        //-   $('input[name=productCodeVersion]').val(codeVersion);
+        //-   $('input[name=productStatus]').eq(status-1).prop('checked',true);
+        //- })
         $('.jq-submit-list').click(function(){
           var id = $('input[name=listId]').val(),
               name = $('input[name=listName]').val();
@@ -256,29 +263,70 @@ html(lang='zh')
             }
           )
         })
+        var uploader = WebUploader.create({
+          // swf文件路径
+          swf:'/lib/fex-webuploader/dist/Uploader.swf',
+          // 文件接收服务端。
+          server: '/users/editProduct',
+          // 选择文件的按钮。可选。
+          // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+          pick: {
+            id : '#picker',
+            multiple : false
+          },
+          accept:{
+            extensions:'zip'
+          },
+          // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+          resize: false
+        });
         $('.jq-submit-product').click(function(){
-          var id = $('input[name=productId]').val(),
-              infoId = $('select[name=productList]').val(),
-              infoName = $('select[name=productList]').find('option[value='+infoId+']').text(),
-              version = $('input[name=productVersion]').val(),
-              codeVesion = $('input[name=productCodeVersion]').val(),
-              status = $('input[name=productStatus]:checked').val();
-          $.post('/users/editProduct', {
-                'id'         : id,
-                'info'       : {
-                  'id'       : infoId,
-                  'name'     : infoName
-                },
-                'version'    : version,
-                'codeVersion': codeVesion,
-                'status'     : status
-              }, function(data, textStatus, xhr) {
-                if(data.status == 1){
-                  window.location.reload();
-                }else{
-                  alert(data.info)
-                }
-            }
-          )
+          var infoId = infoId = $('select[name=productList]').val();
+          uploader.options.formData.id = $('input[name=productId]').val();
+          uploader.options.formData.infoId = $('select[name=productList]').val(),
+          uploader.options.formData.infoName = $('select[name=productList]').find('option[value='+infoId+']').text(),
+          uploader.options.formData.version = $('input[name=productVersion]').val(),
+          uploader.options.formData.codeVersion = $('input[name=productCodeVersion]').val(),
+          uploader.options.formData.status = $('input[name=productStatus]:checked').val();
+          uploader.upload();
+          //- var id = $('input[name=productId]').val(),
+          //-     infoId = $('select[name=productList]').val(),
+          //-     infoName = $('select[name=productList]').find('option[value='+infoId+']').text(),
+          //-     version = $('input[name=productVersion]').val(),
+          //-     codeVesion = $('input[name=productCodeVersion]').val(),
+          //-     status = $('input[name=productStatus]:checked').val();
+          //- $.post('/users/editProduct', {
+          //-       'id'         : id,
+          //-       'info'       : {
+          //-         'id'       : infoId,
+          //-         'name'     : infoName
+          //-       },
+          //-       'version'    : version,
+          //-       'codeVersion': codeVesion,
+          //-       'status'     : status
+          //-     }, function(data, textStatus, xhr) {
+          //-       if(data.status == 1){
+          //-         window.location.reload();
+          //-       }else{
+          //-         alert(data.info)
+          //-       }
+          //-   }
+          //- )
+          uploader.on( 'uploadProgress', function( file, percentage ) {
+            $('.webuploader-pick').text('上传中···')
+          });
+
+          // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+          uploader.on( 'uploadSuccess', function( file ) {
+            $('.webuploader-pick').text('上传成功')
+            window.location.reload();
+          });
+
+          // 文件上传失败，显示上传出错。
+          uploader.on( 'uploadError', function( file ) {
+            $('.webuploader-pick').text('上传失败')
+          });
+
         })
+
       })

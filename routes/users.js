@@ -1,15 +1,21 @@
 var express = require('express');
+var path = require('path');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var router = express.Router();
 var crypto = require('crypto');
 var querystring = require('querystring');
 var _ = require('underscore');
+var formidable = require("formidable");
+var sys = require('sys');
+var fs = require('fs');
+var unzip = require('unzip');
 var usermodel = require('../models/users');
 var productmodel = require('../models/products');
 var listmodel = require('../models/list');
 
-
+var form = new formidable.IncomingForm();
+form.uploadDir = path.join(__dirname, '../tmp');
 /* md5加密 */
 function md5(str){
   var md5 = crypto.createHash('md5');
@@ -17,8 +23,6 @@ function md5(str){
   //console.log(d2);
   return d2;
 }
-
-
 
 /* 用户模块 */
 router.get('/', function(req, res, next) {
@@ -62,10 +66,10 @@ router.get('/', function(req, res, next) {
         }
       })
     }else{
-      res.redirect('/login')
+      res.redirect('/users/login')
     }
   }else{
-    res.redirect('/login')
+    res.redirect('/users/login')
   }
 });
 /* 用户数据提交 */
@@ -120,63 +124,44 @@ router.post('/editList',function(req, res, next) {
   //res.status(200).send({'status':0}).end();
 });
 router.post('/editProduct',function(req, res, next) {
-  /* 包含新增和修改 */
-  var name = req.cookies.name;
-  var connectid = req.cookies['connect.id'];
-  var singename = req.cookies['name_sig'];
-  if(name != undefined){
-    if(md5(name+'this_is_mixin_string'+connectid) == singename){
-      if(req.body.id == undefined || req.body.id == ''){
-        /* 新增 */
-        console.log(req.body)
-        _product = new productmodel({
-          info       : {
-            id       : req.body['info[id]'],
-            name     : req.body['info[name]']
-          },
-          version    : req.body.version,
-          codeVersion: req.body.codeVersion,
-          status     : req.body.status,
-          author     : name
-        })
-        console.log(_product);
-        _product.save(function(err, user){
-          if(err){
-            console.log(err);
-          }
-          res.send({status:1,info:'添加成功'});
-        })
+  form.parse(req, function(err, fields, files) {
+      console.log(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop()));
+      fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop())).pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()) }));
+      /* 包含新增和修改 */
+      var name = req.cookies.name;
+      var connectid = req.cookies['connect.id'];
+      var singename = req.cookies['name_sig'];
+      if(name != undefined){
+        if(md5(name+'this_is_mixin_string'+connectid) == singename){
+            /* 新增 */
+            //console.log(req.body)
+            _product = new productmodel({
+              info       : {
+                id       : fields.infoId,
+                name     : fields.infoName
+              },
+              version    : fields.version,
+              codeVersion: fields.codeVersion,
+              status     : fields.status,
+              author     : name,
+              fs_name    : files.file.name,
+              fs_path    : files.file.path,
+              url        : '/web/'+files.file.path.split('/').pop()+'/index.html'
+            })
+            //console.log(_product);
+            _product.save(function(err, user){
+              if(err){
+                console.log(err);
+              }
+              res.send({status:1,info:'添加成功'});
+            })
+        }else{
+          res.redirect('/users/login')
+        }
       }else{
-        /* 修改 */
-        var newObj = {
-          info       : {
-            id       : req.body['info[id]'],
-            name     : req.body['info[name]']
-          },
-          version    : req.body.version,
-          codeVersion: req.body.codeVersion,
-          status     : req.body.status,
-          author     : name
-        };
-        productmodel.findBy(req.body.id,function(err,product){
-          if(err){
-            console.log(err);
-          }
-          _product = _.extend(product[0],newObj);
-          _product.save(function(err, user){
-            if(err){
-              console.log(err);
-            }
-            res.send({status:1,info:'修改成功'});
-          })
-        })
+        res.status(200).send({status:0,info:'请登录'})
       }
-    }else{
-      res.redirect('/login')
-    }
-  }else{
-    res.status(200).send({status:0,info:'请登录'})
-  }
+  });
 });
 /* 登陆模块 */
 router.get('/login', function(req, res, next) {
