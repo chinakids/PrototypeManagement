@@ -3,7 +3,6 @@
 
 [![npm version](https://badge.fury.io/js/engine.io.svg)](http://badge.fury.io/js/engine.io)
 [![Build Status](https://travis-ci.org/chinakids/PrototypeManagement.svg?branch=master)](https://travis-ci.org/chinakids/PrototypeManagement)
-[![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
 ###1.安装
 
