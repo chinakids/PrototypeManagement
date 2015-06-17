@@ -38,6 +38,10 @@ html(lang='zh')
       .modal-backdrop{
       z-index:1030;
       }
+      .iradio_flat-blue{
+      top:5px;
+      margin-right:5px;
+      }
   body.flat(data-color='grey')
     #wrapper
       #header
@@ -121,7 +125,15 @@ html(lang='zh')
               button.close(data-dismiss="modal",type="button") ×
               h3 添加产品
             div.modal-body
-              p One fine body…
+              .row.nopadding
+                .col-xs-12.nopadding
+                  .widget-box(style="margin:0")
+                    .widget-content.nopadding
+                      form.form-horizontal
+                        .form-group
+                          label.col-sm-3.col-md-3.col-lg-2.control-label 产品名称
+                          .col-sm-9.col-md-9.col-lg-10
+                            input.form-control.input-sm.spinner(type='text',placeholder='请输入产品名称（不大于20个字）')
             div.modal-footer
               a.btn.btn-primary.btn-small(href="javascript:;") 提交
               a.btn.btn-default.btn-small(data-dismiss="modal",href="#") 取消
@@ -132,98 +144,47 @@ html(lang='zh')
               button.close(data-dismiss="modal",type="button") ×
               h3 添加原型
             div.modal-body
-              .col-xs-12
-                .widget-box
-                  .widget-title
-                    span.icon
-                      i.fa.fa-align-justify
-                    h5 Rest of elements...
-                  .widget-content.nopadding
-                    form.form-horizontal(action='#', method='get')
-                      .form-group
-                        label.col-sm-3.col-md-3.col-lg-2.control-label Select input
-                        .col-sm-9.col-md-9.col-lg-10
-                          select
-                            option First option
-                            option Second option
-                            option Third option
-                            option Fourth option
-                            option Fifth option
-                            option Sixth option
-                            option Seventh option
-                            option Eighth option
-                      .form-group
-                        label.col-sm-3.col-md-3.col-lg-2.control-label Multiple Select input
-                        .col-sm-9.col-md-9.col-lg-10
-                          select(multiple='')
-                            option First option
-                            option(selected='') Second option
-                            option Third option
-                            option Fourth option
-                            option Fifth option
-                            option Sixth option
-                            option Seventh option
-                            option Eighth option
-                      .form-group
-                        label.col-sm-3.col-md-3.col-lg-2.control-label Color picker
-                        .col-sm-9.col-md-9.col-lg-10
-                          .row
-                            .col-md-6
-                              input.colorpicker.form-control.input-sm(type='text', data-color='#000000', value='#000000')
-                            .col-md-6
-                              .input-group.input-group-sm.color.colorpicker(data-color='rgba(244,202,56,0.5)', data-color-format='rgba')
-                                span.input-group-addon
-                                  i
-                                input.form-control(type='text', value='rgba(244,202,56,0.5)')
-                      .form-group
-                        label.col-sm-3.col-md-3.col-lg-2.control-label Date picker
-                        .col-sm-9.col-md-9.col-lg-10
-                          .row
-                            .col-md-6
-                              input.datepicker.form-control.input-sm(type='text', data-date='12-02-2012', data-date-format='dd-mm-yyyy', value='12-02-2012')
-                            .col-md-6
-                              .input-group.input-group-sm.date.datepicker(data-date='15/09/2013', data-date-format='dd/mm/yyyy')
-                                span.input-group-addon
-                                  i.fa.fa-calendar
-                                input.form-control(type='text', value='15/09/2013')
-                      .form-group
-                        label.col-sm-3.col-md-3.col-lg-2.control-label Spinner
-                        .col-sm-9.col-md-9.col-lg-10
-                          input.form-control.input-sm.spinner(type='text', value='10')
-                      .form-group
-                        label.col-sm-3.col-md-3.col-lg-2.control-label Radio inputs
-                        .col-sm-9.col-md-9.col-lg-10
-                          label
-                            input(type='radio', name='radios', checked='')
-                            |                       Checked
-                          label
-                            input(type='radio', name='radios')
-                            |                       Unchecked
-                          label.disabled
-                            input(type='radio', name='radios2', checked='', disabled='')
-                            | Checked disabled
-                          label.disabled
-                            input(type='radio', name='radios2', disabled='')
-                            | Unchecked disabled
-                      .form-group
-                        label.col-sm-3.col-md-3.col-lg-2.control-label Checkboxes
-                        .col-sm-9.col-md-9.col-lg-10
-                          label
-                            input(type='checkbox', name='checkboxes', checked='')
-                            |                       Checked
-                          label
-                            input(type='checkbox', name='checkboxes')
-                            |                       Unchcked
-                          label.disabled
-                            input(type='checkbox', name='checkboxes', checked='', disabled='')
-                            |                       Checked disabled
-                          label.disabled
-                            input(type='checkbox', name='checkboxes', disabled='')
-                            |                       Unchecked disabled
-                      .form-group
-                        label.col-sm-3.col-md-3.col-lg-2.control-label File upload input
-                        .col-sm-9.col-md-9.col-lg-10
-                          input(type='file')
+              .row.nopadding
+                .col-xs-12.nopadding
+                  .widget-box(style="margin:0")
+                    .widget-content.nopadding
+                      form.form-horizontal
+                        .form-group
+                          label.col-sm-3.col-md-3.col-lg-2.control-label 产品
+                          .col-sm-9.col-md-9.col-lg-10
+                            select
+                              option First option
+                              option Second option
+                              option Third option
+                              option Fourth option
+                              option Fifth option
+                              option Sixth option
+                              option Seventh option
+                              option Eighth option
+                        .form-group
+                          label.col-sm-3.col-md-3.col-lg-2.control-label 产品版本
+                          .col-sm-9.col-md-9.col-lg-10
+                            input.form-control.input-sm.spinner(type='text',placeholder='请输入产品版本号')
+                        .form-group
+                          label.col-sm-3.col-md-3.col-lg-2.control-label 需求版本
+                          .col-sm-9.col-md-9.col-lg-10
+                            input.form-control.input-sm.spinner(type='text',placeholder='请输入需求版本号（纯数字）')
+                        .form-group
+                          label.col-sm-3.col-md-3.col-lg-2.control-label 状态
+                          .col-sm-9.col-md-9.col-lg-10
+                            label
+                              input(type='radio', name='status', checked='')
+                              | 正常&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            label
+                              input(type='radio', name='status')
+                              | 修改中&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            label
+                              input(type='radio', name='status')
+                              | 关闭&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        .form-group
+                          label.col-sm-3.col-md-3.col-lg-2.control-label 原型包
+                          .col-sm-9.col-md-9.col-lg-10
+                            input(type='file')
             div.modal-footer
               a.btn.btn-primary.btn-small(href="javascript:;") 提交
               a.btn.btn-default.btn-small(data-dismiss="modal",href="#") 取消
