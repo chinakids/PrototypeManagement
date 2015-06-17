@@ -38,8 +38,7 @@ html(lang='zh')
       .modal-backdrop{
       z-index:1030;
       }
-      .iradio_flat-blue{
-      top:5px;
+      input[type=radio]{
       margin-right:5px;
       }
   body.flat(data-color='grey')
@@ -49,9 +48,9 @@ html(lang='zh')
         .btn-group
           a.btn.btn-inverse(href='/')
             i.fa.fa-home.icon-white  原型首页
-          a.btn.btn-inverse(href='#add-list',data-toggle="modal")
+          a.btn.btn-inverse.jq-add-list(href='#add-list',data-toggle="modal")
             i.fa.fa-plus.icon-white  添加产品
-          a.btn.btn-inverse(href='#add-product',data-toggle="modal")
+          a.btn.btn-inverse.jq-add-product(href='#add-product',data-toggle="modal")
             i.fa.fa-plus.icon-white  添加原型
           a.btn.btn-inverse(href='/users/logout')
             i.fa.fa-sign-out.icon-white  退出
@@ -70,11 +69,11 @@ html(lang='zh')
                       th.col-xs-8 产品名称
                       th.col-xs-4 操作
                   tbody
-                    each item in data
+                    each item in list
                       tr
-                        td(data-id="#{item._id}") #{item.name}
+                        td.jq-list-name(data-id="#{item._id}") #{item.name}
                         td.text-center
-                          a.pending(href="javascript:;") 删除
+                          a.pending.jq-edit-list(href='#add-list',data-toggle="modal",data-id="#{item._id}") 编辑
                           | &nbsp;|&nbsp;
                           a(href="javascript:;") 查看
           .col-xs-9
@@ -98,26 +97,26 @@ html(lang='zh')
                     each item in data
                       tr
                         td.re-time.text-center(data-time="#{item.meta.updateAt}")
-                        td #{item.info.name}
-                        td.text-center #{item.version}
-                        td.text-center #{item.codeVersion}
-                        if item.status == 0
-                          td.open
+                        td.jq-product-name(data-id="#{item.info.id}") #{item.info.name}
+                        td.jq-product-version.text-center #{item.version}
+                        td.jq-product-codeVersion.text-center #{item.codeVersion}
+                        if item.status == 1
+                          td.jq-product-status(data-status="#{item.status}").open
                             span.badge 正常
-                        else if item.status == 1
-                          td.stop
-                            span.badge 修改中
                         else if item.status == 2
-                          td.over
+                          td.jq-product-status(data-status="#{item.status}").stop
+                            span.badge 修改中
+                        else if item.status == 3
+                          td.jq-product-status(data-status="#{item.status}").over
                             span.badge 关闭
                         else
-                          td.other
+                          td.jq-product-status.other
                             span.badge 关闭
                         td #{item.author}
                         td.text-center
                           a(href="#{item.url}",target="_blank") 查看
                           | &nbsp;|&nbsp;
-                          a(href="javascript:;") 编辑
+                          a.jq-edit-product(href='#add-product',data-toggle="modal",data-id="#{item._id}") 编辑
       div#add-list.modal.fade
         div.modal-dialog
           div.modal-content
@@ -130,12 +129,13 @@ html(lang='zh')
                   .widget-box(style="margin:0")
                     .widget-content.nopadding
                       form.form-horizontal
+                        input.jq-list-id(type='hidden',name='listId')
                         .form-group
                           label.col-sm-3.col-md-3.col-lg-2.control-label 产品名称
                           .col-sm-9.col-md-9.col-lg-10
-                            input.form-control.input-sm.spinner(type='text',placeholder='请输入产品名称（不大于20个字）')
+                            input.form-control.input-sm.spinner(type='text',placeholder='请输入产品名称（不大于20个字）',name='listName')
             div.modal-footer
-              a.btn.btn-primary.btn-small(href="javascript:;") 提交
+              a.btn.btn-primary.btn-small.jq-submit-list(href="javascript:;") 提交
               a.btn.btn-default.btn-small(data-dismiss="modal",href="#") 取消
       div#add-product.modal.fade
         div.modal-dialog
@@ -149,44 +149,39 @@ html(lang='zh')
                   .widget-box(style="margin:0")
                     .widget-content.nopadding
                       form.form-horizontal
+                        input.jq-product-id(type='hidden',name='productId')
                         .form-group
                           label.col-sm-3.col-md-3.col-lg-2.control-label 产品
                           .col-sm-9.col-md-9.col-lg-10
-                            select
-                              option First option
-                              option Second option
-                              option Third option
-                              option Fourth option
-                              option Fifth option
-                              option Sixth option
-                              option Seventh option
-                              option Eighth option
+                            select(name='productList',style='position: relative;top: 5px;')
+                              each item in list
+                                option(value="#{item._id}") #{item.name}
                         .form-group
                           label.col-sm-3.col-md-3.col-lg-2.control-label 产品版本
                           .col-sm-9.col-md-9.col-lg-10
-                            input.form-control.input-sm.spinner(type='text',placeholder='请输入产品版本号')
+                            input.form-control.input-sm.spinner(type='text',placeholder='请输入产品版本号',name='productVersion')
                         .form-group
                           label.col-sm-3.col-md-3.col-lg-2.control-label 需求版本
                           .col-sm-9.col-md-9.col-lg-10
-                            input.form-control.input-sm.spinner(type='text',placeholder='请输入需求版本号（纯数字）')
+                            input.form-control.input-sm.spinner(type='text',placeholder='请输入需求版本号（纯数字）',name='productCodeVersion')
                         .form-group
                           label.col-sm-3.col-md-3.col-lg-2.control-label 状态
                           .col-sm-9.col-md-9.col-lg-10
                             label
-                              input(type='radio', name='status', checked='')
+                              input(type='radio', name='productStatus',value='1', checked='')
                               | 正常&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             label
-                              input(type='radio', name='status')
+                              input(type='radio', name='productStatus',value='2')
                               | 修改中&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             label
-                              input(type='radio', name='status')
+                              input(type='radio', name='productStatus',value='3')
                               | 关闭&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        .form-group
+                        .form-group.jq-file
                           label.col-sm-3.col-md-3.col-lg-2.control-label 原型包
                           .col-sm-9.col-md-9.col-lg-10
-                            input(type='file')
+                            input(type='file',name='productFile',style='position: relative;top: 5px;')
             div.modal-footer
-              a.btn.btn-primary.btn-small(href="javascript:;") 提交
+              a.btn.btn-primary.btn-small.jq-submit-product(href="javascript:;") 提交
               a.btn.btn-default.btn-small(data-dismiss="modal",href="#") 取消
       .row
         #footer.col-xs-12
@@ -206,11 +201,83 @@ html(lang='zh')
       $(function(){
         function formatTime(s){
           var t = new Date(s);
-          var str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 "+t.getHours()+":"+t.getMinutes();
+          var str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 "+(parseInt(t.getHours())<10 ? ('0'+t.getHours()) : t.getHours())+":"+(parseInt(t.getMinutes())<10 ? ('0'+t.getMinutes()) : t.getMinutes());
           return str;
         }
         $('.re-time').each(function(){
           var time = $(this).attr('data-time');
           $(this).text(formatTime(time));
+        })
+        $('.jq-add-list').click(function(){
+          $('input[name=listId]').val('');
+          $('input[name=listName]').val('');
+        })
+        $('.jq-add-product').click(function(){
+          $('input[name=productId]').val('');
+          $('select[name=productList]').val('');
+          $('select[name=productList] option').eq(0).attr('selected',true);
+          $('input[name=productVersion]').val('');
+          $('input[name=productCodeVersion]').val('');
+          $('input[name=productStatus]:checked').val('');
+          $('.jq-file').hide();
+        })
+        $('.jq-edit-list').click(function(){
+          var _id = $(this).attr('data-id'),
+              name = $(this).parent().siblings('.jq-list-name').text();
+          $('input[name=listId]').val(_id);
+          $('input[name=listName]').val(name);
+        })
+        $('.jq-edit-product').click(function(){
+          var _id = $(this).attr('data-id'),
+              infoId = $(this).parent().siblings('.jq-product-name').attr("data-id"),
+              version = $(this).parent().siblings('.jq-product-version').text(),
+              codeVersion = $(this).parent().siblings('.jq-product-codeVersion').text(),
+              status = $(this).parent().siblings('.jq-product-status').attr('data-status');
+          $('.jq-file').hide();
+          $('input[name=productId]').val(_id);
+          $('select[name=productList] option[value='+infoId+']').attr('selected',true);
+          $('input[name=productVersion]').val(version);
+          $('input[name=productCodeVersion]').val(codeVersion);
+          $('input[name=productStatus]').eq(status-1).prop('checked',true);
+        })
+        $('.jq-submit-list').click(function(){
+          var id = $('input[name=listId]').val(),
+              name = $('input[name=listName]').val();
+          $.post('/users/editList', {
+              'id': id,
+              'name': name
+            }, function(data, textStatus, xhr) {
+              if(data.status == 1){
+                window.location.reload();
+              }else{
+                alert(data.info)
+              }
+            }
+          )
+        })
+        $('.jq-submit-product').click(function(){
+          var id = $('input[name=productId]').val(),
+              infoId = $('select[name=productList]').val(),
+              infoName = $('select[name=productList]').find('option[value='+infoId+']').text(),
+              version = $('input[name=productVersion]').val(),
+              codeVesion = $('input[name=productCodeVersion]').val(),
+              status = $('input[name=productStatus]:checked').val();
+          $.post('/users/editProduct', {
+                'id'         : id,
+                'info'       : {
+                  'id'       : infoId,
+                  'name'     : infoName
+                },
+                'version'    : version,
+                'codeVersion': codeVesion,
+                'status'     : status
+              }, function(data, textStatus, xhr) {
+                if(data.status == 1){
+                  window.location.reload();
+                }else{
+                  alert(data.info)
+                }
+            }
+          )
         })
       })

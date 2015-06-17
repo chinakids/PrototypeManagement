@@ -5,10 +5,7 @@ var mongoose = require('mongoose');
  */
 var ListSchema = new mongoose.Schema({
   name       : String,
-  author     : {
-    id       : String,
-    name     : String
-  },
+  author     : String,
   meta       : {
     createAt : {
       type      : Date,
@@ -39,6 +36,12 @@ ListSchema.statics = {
   fetch : function(cb){
     return this
       .find({})
+      .sort('meta.updateAt')
+      .exec(cb);
+  },
+  findBy : function(id,cb){
+    return this
+      .find({_id:id})
       .sort('meta.updateAt')
       .exec(cb);
   },
