@@ -35,6 +35,9 @@ html(lang='zh')
       .nofilter .dataTables_filter{
       display:none;
       }
+      .modal-backdrop{
+      z-index:1030;
+      }
   body.flat(data-color='grey')
     #wrapper
       #header
@@ -42,10 +45,10 @@ html(lang='zh')
         .btn-group
           a.btn.btn-inverse(href='/')
             i.fa.fa-home.icon-white  原型首页
-          a.btn.btn-inverse(href='/')
-            i.fa.fa-plus.icon-white  创建产品
-          a.btn.btn-inverse(href='/')
-            i.fa.fa-plus.icon-white  创建原型
+          a.btn.btn-inverse(href='#add-list',data-toggle="modal")
+            i.fa.fa-plus.icon-white  添加产品
+          a.btn.btn-inverse(href='#add-product',data-toggle="modal")
+            i.fa.fa-plus.icon-white  添加原型
           a.btn.btn-inverse(href='/users/logout')
             i.fa.fa-sign-out.icon-white  退出
       #content
@@ -67,7 +70,7 @@ html(lang='zh')
                       tr
                         td(data-id="#{item._id}") #{item.name}
                         td.text-center
-                          a(href="javascript:;") 删除
+                          a.pending(href="javascript:;") 删除
                           | &nbsp;|&nbsp;
                           a(href="javascript:;") 查看
           .col-xs-9
@@ -91,7 +94,7 @@ html(lang='zh')
                     each item in data
                       tr
                         td.re-time.text-center(data-time="#{item.meta.updateAt}")
-                        td #{item.name}
+                        td #{item.info.name}
                         td.text-center #{item.version}
                         td.text-center #{item.codeVersion}
                         if item.status == 0
@@ -111,6 +114,119 @@ html(lang='zh')
                           a(href="#{item.url}",target="_blank") 查看
                           | &nbsp;|&nbsp;
                           a(href="javascript:;") 编辑
+      div#add-list.modal.fade
+        div.modal-dialog
+          div.modal-content
+            div.modal-header
+              button.close(data-dismiss="modal",type="button") ×
+              h3 添加产品
+            div.modal-body
+              p One fine body…
+            div.modal-footer
+              a.btn.btn-primary.btn-small(href="javascript:;") 提交
+              a.btn.btn-default.btn-small(data-dismiss="modal",href="#") 取消
+      div#add-product.modal.fade
+        div.modal-dialog
+          div.modal-content
+            div.modal-header
+              button.close(data-dismiss="modal",type="button") ×
+              h3 添加原型
+            div.modal-body
+              .col-xs-12
+                .widget-box
+                  .widget-title
+                    span.icon
+                      i.fa.fa-align-justify
+                    h5 Rest of elements...
+                  .widget-content.nopadding
+                    form.form-horizontal(action='#', method='get')
+                      .form-group
+                        label.col-sm-3.col-md-3.col-lg-2.control-label Select input
+                        .col-sm-9.col-md-9.col-lg-10
+                          select
+                            option First option
+                            option Second option
+                            option Third option
+                            option Fourth option
+                            option Fifth option
+                            option Sixth option
+                            option Seventh option
+                            option Eighth option
+                      .form-group
+                        label.col-sm-3.col-md-3.col-lg-2.control-label Multiple Select input
+                        .col-sm-9.col-md-9.col-lg-10
+                          select(multiple='')
+                            option First option
+                            option(selected='') Second option
+                            option Third option
+                            option Fourth option
+                            option Fifth option
+                            option Sixth option
+                            option Seventh option
+                            option Eighth option
+                      .form-group
+                        label.col-sm-3.col-md-3.col-lg-2.control-label Color picker
+                        .col-sm-9.col-md-9.col-lg-10
+                          .row
+                            .col-md-6
+                              input.colorpicker.form-control.input-sm(type='text', data-color='#000000', value='#000000')
+                            .col-md-6
+                              .input-group.input-group-sm.color.colorpicker(data-color='rgba(244,202,56,0.5)', data-color-format='rgba')
+                                span.input-group-addon
+                                  i
+                                input.form-control(type='text', value='rgba(244,202,56,0.5)')
+                      .form-group
+                        label.col-sm-3.col-md-3.col-lg-2.control-label Date picker
+                        .col-sm-9.col-md-9.col-lg-10
+                          .row
+                            .col-md-6
+                              input.datepicker.form-control.input-sm(type='text', data-date='12-02-2012', data-date-format='dd-mm-yyyy', value='12-02-2012')
+                            .col-md-6
+                              .input-group.input-group-sm.date.datepicker(data-date='15/09/2013', data-date-format='dd/mm/yyyy')
+                                span.input-group-addon
+                                  i.fa.fa-calendar
+                                input.form-control(type='text', value='15/09/2013')
+                      .form-group
+                        label.col-sm-3.col-md-3.col-lg-2.control-label Spinner
+                        .col-sm-9.col-md-9.col-lg-10
+                          input.form-control.input-sm.spinner(type='text', value='10')
+                      .form-group
+                        label.col-sm-3.col-md-3.col-lg-2.control-label Radio inputs
+                        .col-sm-9.col-md-9.col-lg-10
+                          label
+                            input(type='radio', name='radios', checked='')
+                            |                       Checked
+                          label
+                            input(type='radio', name='radios')
+                            |                       Unchecked
+                          label.disabled
+                            input(type='radio', name='radios2', checked='', disabled='')
+                            | Checked disabled
+                          label.disabled
+                            input(type='radio', name='radios2', disabled='')
+                            | Unchecked disabled
+                      .form-group
+                        label.col-sm-3.col-md-3.col-lg-2.control-label Checkboxes
+                        .col-sm-9.col-md-9.col-lg-10
+                          label
+                            input(type='checkbox', name='checkboxes', checked='')
+                            |                       Checked
+                          label
+                            input(type='checkbox', name='checkboxes')
+                            |                       Unchcked
+                          label.disabled
+                            input(type='checkbox', name='checkboxes', checked='', disabled='')
+                            |                       Checked disabled
+                          label.disabled
+                            input(type='checkbox', name='checkboxes', disabled='')
+                            |                       Unchecked disabled
+                      .form-group
+                        label.col-sm-3.col-md-3.col-lg-2.control-label File upload input
+                        .col-sm-9.col-md-9.col-lg-10
+                          input(type='file')
+            div.modal-footer
+              a.btn.btn-primary.btn-small(href="javascript:;") 提交
+              a.btn.btn-default.btn-small(data-dismiss="modal",href="#") 取消
       .row
         #footer.col-xs-12
           | 2012 - 2013 &copy; Unicorn Admin. Brought to you by

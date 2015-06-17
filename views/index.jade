@@ -68,7 +68,7 @@ html(lang='zh')
                     each item in data
                       tr
                         td.re-time.text-center(data-time="#{item.meta.updateAt}")
-                        td #{item.name}
+                        td #{item.info.name}
                         td.text-center #{item.version}
                         td.text-center #{item.codeVersion}
                         if item.status == 0

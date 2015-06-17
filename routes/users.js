@@ -7,6 +7,7 @@ var querystring = require('querystring');
 var _ = require('underscore');
 var usermodel = require('../models/users');
 var productmodel = require('../models/products');
+var listmodel = require('../models/list');
 
 
 /* md5加密 */
@@ -51,7 +52,12 @@ router.get('/', function(req, res, next) {
   //res.render('users', { title: 'user' });
 });
 /* 用户数据提交 */
-router.post('/edit',function(req, res, next) {
+router.post('/editList',function(req, res, next) {
+  /* 包含新增和修改 */
+  console.log(req.body);
+  //res.status(200).send({'status':0}).end();
+})
+router.post('/editProduct',function(req, res, next) {
   /* 包含新增和修改 */
   console.log(req.body);
   //res.status(200).send({'status':0}).end();
@@ -106,7 +112,6 @@ router.get('/register', function(req, res, next) {
   res.render('register', { title: '注册' });
 });
 router.post('/register', function(req, res, next) {
-
   var userObj = req.body;
   var _user;
   userObj.password = md5(userObj.password);

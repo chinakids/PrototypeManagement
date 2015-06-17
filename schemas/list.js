@@ -1,12 +1,14 @@
 var mongoose = require('mongoose');
 /**
- * 创建用户的shcema
+ * 创建产品的shcema
  * @type {mongoose}
  */
-var UserSchema = new mongoose.Schema({
-  userName   : String,
-  passWord   : String,
+var ListSchema = new mongoose.Schema({
   name       : String,
+  author     : {
+    id       : String,
+    name     : String
+  },
   meta       : {
     createAt : {
       type      : Date,
@@ -21,7 +23,7 @@ var UserSchema = new mongoose.Schema({
 /**
  * 给save方法添加预处理
  */
-UserSchema.pre('save',function(next){
+ListSchema.pre('save',function(next){
   if(this.isNew){
     this.meta.createAt = this.meta.updateAt = Date.now();
   }else{
@@ -33,27 +35,19 @@ UserSchema.pre('save',function(next){
  * 绑定静态方法
  * @type {Object}
  */
-UserSchema.statics = {
+ListSchema.statics = {
   fetch : function(cb){
     return this
       .find({})
       .sort('meta.updateAt')
       .exec(cb);
   },
-  findBy : function(id,cb){
-    //console.log(id);
+  findByAuthor : function(id,cb){
     return this
-      .find({_id:id})
-      .sort('meta.updateAt')
-      .exec(cb);
-  },
-  findByName : function(id,cb){
-    //console.log(id);
-    return this
-      .find({userName:id})
+      .find({author:{id:id}})
       .sort('meta.updateAt')
       .exec(cb);
   }
 }
 
-module.exports = UserSchema;
+module.exports = ListSchema;

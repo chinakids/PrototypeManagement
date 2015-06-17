@@ -4,7 +4,10 @@ var mongoose = require('mongoose');
  * @type {mongoose}
  */
 var ProductSchema = new mongoose.Schema({
-  name       : String,
+  info       : {
+    id       : String,
+    name     : String
+  },
   version    : String,
   codeVersion: Number,
   status     : Number,
@@ -18,7 +21,7 @@ var ProductSchema = new mongoose.Schema({
     updateAt : {
       type      : Date,
       default   : Date.now()
-    },
+    }
   }
 })
 /**
@@ -41,13 +44,13 @@ ProductSchema.statics = {
     return this
       .find({})
       .sort('meta.updateAt')
-      exec(cb);
+      .exec(cb);
   },
   findBy : function(id,cb){
     return this
       .find({_id:id})
       .sort('meta.updateAt')
-      exec(cb);
+      .exec(cb);
   }
 }
 
