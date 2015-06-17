@@ -75,13 +75,14 @@ html(lang='zh')
                         td.text-center
                           a.pending.jq-edit-list(href='#add-list',data-toggle="modal",data-id="#{item._id}") 编辑
                           | &nbsp;|&nbsp;
-                          a(href="javascript:;") 查看
+                          a(href="?i=#{item._id}&n=#{item.name}",data-id="#{item._id}") 查看原型
           .col-xs-9
             .widget-box
               .widget-title
                 span.icon
                   i.fa.fa-th
                 h5 #{title}
+                  a(href="/users",style="margin-left: 10px;border: 1px solid #CDCDCD;border-radius: 4px;padding: 2px 10px;") 查看全部
               .widget-content.nopadding
                 table.table.table-bordered.table-striped.table-hover.data-table
                   thead

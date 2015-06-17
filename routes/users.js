@@ -22,28 +22,44 @@ function md5(str){
 
 /* 用户模块 */
 router.get('/', function(req, res, next) {
-  console.log('/')
+  var queryId = req.query.i || '',queryName = req.query.n;
   var name = req.cookies.name;
   var connectid = req.cookies['connect.id'];
   var singename = req.cookies['name_sig'];
+  console.log(queryId);
   if(name != undefined){
     if(md5(name+'this_is_mixin_string'+connectid) == singename){
-      productmodel.find(function(err,product){
+      listmodel.find(function(err,list){
         if(err){
           console.log(err);
         }
-        console.log(product);
-        listmodel.find(function(err,list){
-          if(err){
-            console.log(err);
-          }
-          console.log(list);
-          res.render('users', {
-            title : '您的产品原型列表',
-            data  : product,
-            list  : list
-          });
-        })
+        //console.log(product);
+        if(queryId == ''){
+          productmodel.find(function(err,product){
+            if(err){
+              console.log(err);
+            }
+            //console.log(list);
+            res.render('users', {
+              title : '您的产品原型列表',
+              data  : product,
+              list  : list
+            });
+          })
+        }else{
+          console.log('start')
+          productmodel.findByListId(queryId,function(err,product){
+            if(err){
+              console.log(err);
+            }
+            console.log(product);
+            res.render('users', {
+              title : queryName+'原型列表',
+              data  : product,
+              list  : list
+            });
+          })
+        }
       })
     }else{
       res.redirect('/login')
