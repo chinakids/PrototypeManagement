@@ -360,7 +360,16 @@ html(lang='zh')
           )
         })
         $('.jq-submit-product').click(function(){
-          var infoId = infoId = $('select[name=productList]').val();
+          var infoId = $('select[name=productList]').val();
+          if($('select[name=productList]').val() == '' || $('input[name=productVersion]').val() == '' || $('input[name=productCodeVersion]').val() ==''){
+            alert('请填写完整信息');
+            return false;
+          }
+          if($('.webuploader-pick').text() == '选择文件'){
+            alert('请选择文件')
+            return false;
+          }
+
           uploader.options.formData.id = $('input[name=productId]').val();
           uploader.options.formData.infoId = $('select[name=productList]').val(),
           uploader.options.formData.infoName = $('select[name=productList]').find('option[value='+infoId+']').text(),
@@ -391,8 +400,6 @@ html(lang='zh')
           //-       }
           //-   }
           //- )
-
-
           uploader.on( 'uploadProgress', function( file, percentage ) {
             $('.webuploader-pick').text('上传中···')
           });

@@ -244,7 +244,7 @@ router.post('/register', function(req, res, next) {
         res.send({status:1,info:'注册成功'});
       })
     }else{
-      res.send({status:0,info:'此帐号已存在'});
+      res.send({status:0,info:'此帐号已存在或者存在重名帐号'});
     }
   })
 });
