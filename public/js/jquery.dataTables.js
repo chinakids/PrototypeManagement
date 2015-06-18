@@ -3950,17 +3950,17 @@
 				{
 					if ( aaSort.length > 0 && aaSort[0][0] == i )
 					{
-						nTh.setAttribute('aria-sort', aaSort[0][1]=="asc" ? "ascending" : "descending" );
+						nTh.setAttribute('aria-sort', aaSort[0][1]=="asc" ?  "descending" : "ascending"  );
 						
 						var nextSort = (aoColumns[i].asSorting[ aaSort[0][2]+1 ]) ? 
 							aoColumns[i].asSorting[ aaSort[0][2]+1 ] : aoColumns[i].asSorting[0];
 						nTh.setAttribute('aria-label', sTitle+
-							(nextSort=="asc" ? oAria.sSortAscending : oAria.sSortDescending) );
+							(nextSort=="asc" ? oAria.sSortDescending : oAria.sSortAscending ) );
 					}
 					else
 					{
 						nTh.setAttribute('aria-label', sTitle+
-							(aoColumns[i].asSorting[0]=="asc" ? oAria.sSortAscending : oAria.sSortDescending) );
+							(aoColumns[i].asSorting[0]=="asc" ? oAria.sSortDescending : oAria.sSortAscending ) );
 					}
 				}
 				else

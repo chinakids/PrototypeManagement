@@ -5,6 +5,7 @@
 **/
 .open,.over,.stop,.other{
   text-align: center;
+  cursor: pointer;
 }
 .open .badge{
   color: #3c763d;

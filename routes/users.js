@@ -124,7 +124,7 @@ router.post('/editProduct',function(req, res, next) {
               fs_path    : files.file.path,
               url        : '/web/'+files.file.path.split('/').pop()+'/index.html'
             })
-            //console.log(_product);
+            console.log(_product);
             _product.save(function(err, user){
               if(err){
                 console.log(err);
@@ -135,7 +135,7 @@ router.post('/editProduct',function(req, res, next) {
           res.redirect('/users/login')
         }
       }else{
-        res.status(200).send({status:0,info:'请登录'})
+        res.send({status:0,info:'请登录'})
       }
   });
 });

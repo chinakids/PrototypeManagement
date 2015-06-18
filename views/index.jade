@@ -40,6 +40,8 @@ html(lang='zh')
           if login == false
             a.btn.btn-inverse(href='/users/login')
               i.fa.fa-user.icon-white  登陆
+            a.btn.btn-inverse(href='/users/register')
+              i.fa.fa-edit.icon-white  注册
           else
             a.btn.btn-inverse(href='/users')
               i.fa.fa-cog.icon-white  [#{login.name}]管理中心
@@ -57,32 +59,32 @@ html(lang='zh')
                 table.table.table-bordered.table-striped.table-hover.data-table
                   thead
                     tr
-                      th.col-xs-2 时间
-                      th.col-xs-4 名称
+                      th.col-xs-2 创建时间
+                      th.col-xs-5 名称
                       th.col-xs-1 项目版本
                       th.col-xs-1 原型版本
                       th.col-xs-1 状态
                       th.col-xs-1 作者
-                      th.col-xs-2 操作
+                      th.col-xs-1 操作
                   tbody
                     each item in data
                       tr
-                        td.re-time.text-center(data-time="#{item.meta.updateAt}")
+                        td.re-time.no-hour.text-center(data-time="#{item.meta.createAt}") #{item.meta.createAt}
                         td #{item.info.name}
                         td.text-center #{item.version}
                         td.text-center #{item.codeVersion}
                         if item.status == 1
                           td.open
-                            span.badge 正常
+                            span.badge(title="最后修改:\n#{item.meta.updateAt}") 正常
                         else if item.status == 2
                           td.stop
-                            span.badge 修改中
+                            span.badge(title="最后修改:\n#{item.meta.updateAt}") 修改中
                         else if item.status == 3
                           td.over
-                            span.badge 关闭
+                            span.badge(title="最后修改:\n#{item.meta.updateAt}") 关闭
                         else
                           td.other
-                            span.badge 关闭
+                            span.badge(title="最后修改:\n#{item.meta.updateAt}") 未知
                         td #{item.author}
                         td.text-center
                           a(href="#{item.url}",target="_blank") 查看
@@ -102,13 +104,32 @@ html(lang='zh')
     script(src='/js/unicorn.tables.js')
     script.
       $(function(){
-        function formatTime(s){
+        function formatTime(s,bool){
           var t = new Date(s);
-          var str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 "+t.getHours()+":"+t.getMinutes();
+          var str;
+          if(bool){
+            str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 "+(parseInt(t.getHours())<10 ? ('0'+t.getHours()) : t.getHours())+":"+(parseInt(t.getMinutes())<10 ? ('0'+t.getMinutes()) : t.getMinutes());
+          }else{
+          str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 ";
+          }
           return str;
         }
         $('.re-time').each(function(){
           var time = $(this).attr('data-time');
-          $(this).text(formatTime(time));
+          if($(this).hasClass('no-hour')){
+              $(this).text(formatTime(time,false));
+          }else{
+              $(this).text(formatTime(time,true));
+          }
+        })
+        $('.dataTables_paginate .ui-button').click(function(){
+          $('.re-time').each(function(){
+            var time = $(this).attr('data-time');
+            if($(this).hasClass('no-hour')){
+              $(this).text(formatTime(time,false));
+            }else{
+              $(this).text(formatTime(time,true));
+            }
+          })
         })
       })

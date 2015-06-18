@@ -42,6 +42,10 @@ html(lang='zh')
       input[type=radio]{
       margin-right:5px;
       }
+      .webuploader-pick {
+      padding: 4px 15px;
+      top: 2px;
+      }
   body.flat(data-color='grey')
     #wrapper
       #header
@@ -86,7 +90,7 @@ html(lang='zh')
                 table.table.table-bordered.table-striped.table-hover.data-table
                   thead
                     tr
-                      th.col-xs-2 时间
+                      th.col-xs-2 创建时间
                       th.col-xs-4 名称
                       th.col-xs-1 项目版本
                       th.col-xs-1 原型版本
@@ -96,22 +100,22 @@ html(lang='zh')
                   tbody
                     each item in data
                       tr
-                        td.re-time.text-center(data-time="#{item.meta.updateAt}") #{item.meta.updateAt}
+                        td.re-time.no-hour.text-center(data-time="#{item.meta.createAt}") #{item.meta.createAt}
                         td.jq-product-name(data-id="#{item.info.id}") #{item.info.name}
                         td.jq-product-version.text-center #{item.version}
                         td.jq-product-codeVersion.text-center #{item.codeVersion}
                         if item.status == 1
                           td.jq-product-status(data-status="#{item.status}").open
-                            span.badge 正常
+                            span.badge(title="最后修改:\n#{item.meta.updateAt}") 正常
                         else if item.status == 2
                           td.jq-product-status(data-status="#{item.status}").stop
-                            span.badge 修改中
+                            span.badge(title="最后修改:\n#{item.meta.updateAt}") 修改中
                         else if item.status == 3
                           td.jq-product-status(data-status="#{item.status}").over
-                            span.badge 关闭
+                            span.badge(title="最后修改:\n#{item.meta.updateAt}") 关闭
                         else
                           td.jq-product-status.other
-                            span.badge 未知
+                            span.badge(title="最后修改:\n#{item.meta.updateAt}") 未知
                         td #{item.author}
                         td.text-center
                           a.jq-edit-status(href="#edit-status",data-toggle="modal",target="_blank",data-id="#{item._id}",data-status="#{item.status}") 修改状态
@@ -153,7 +157,10 @@ html(lang='zh')
                           .col-sm-9.col-md-9.col-lg-10
                             select(name='productList',style='position: relative;top: 5px;')
                               each item in list
-                                option(value="#{item._id}") #{item.name}
+                                if $index == 0
+                                  option(value="#{item._id}",selected) #{item.name}
+                                else
+                                  option(value="#{item._id}") #{item.name}
                         .form-group
                           label.col-sm-3.col-md-3.col-lg-2.control-label 产品版本
                           .col-sm-9.col-md-9.col-lg-10
@@ -229,25 +236,39 @@ html(lang='zh')
     script(src='/js/unicorn.tables.js')
     script.
       $(function(){
-        function formatTime(s){
+        function formatTime(s,bool){
           var t = new Date(s);
-          var str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 "+(parseInt(t.getHours())<10 ? ('0'+t.getHours()) : t.getHours())+":"+(parseInt(t.getMinutes())<10 ? ('0'+t.getMinutes()) : t.getMinutes());
+          var str;
+          if(bool){
+            str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 "+(parseInt(t.getHours())<10 ? ('0'+t.getHours()) : t.getHours())+":"+(parseInt(t.getMinutes())<10 ? ('0'+t.getMinutes()) : t.getMinutes());
+          }else{
+          str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 ";
+          }
           return str;
         }
         $('.re-time').each(function(){
           var time = $(this).attr('data-time');
-          $(this).text(formatTime(time));
+          if($(this).hasClass('no-hour')){
+              $(this).text(formatTime(time,false));
+          }else{
+              $(this).text(formatTime(time,true));
+          }
         })
         $('.dataTables_paginate .ui-button').click(function(){
           $('.re-time').each(function(){
             var time = $(this).attr('data-time');
-            $(this).text(formatTime(time));
+            if($(this).hasClass('no-hour')){
+              $(this).text(formatTime(time,false));
+            }else{
+              $(this).text(formatTime(time,true));
+            }
           })
         })
         //- $('.jq-add-list').click(function(){
         //-   $('input[name=listId]').val('');
         //-   $('input[name=listName]').val('');
         //- })
+        var uploader;
         $('.jq-add-product').click(function(){
           $('select[name=productList]').val('');
           $('select[name=productList] option').eq(0).attr('selected',true);
@@ -255,6 +276,29 @@ html(lang='zh')
           $('input[name=productCodeVersion]').val('');
           $('input[name=productStatus]:checked').val('');
           $('.jq-file').show();
+          setTimeout(function(){
+            uploader = WebUploader.create({
+              // swf文件路径
+              swf:'/lib/fex-webuploader/dist/Uploader.swf',
+              // 文件接收服务端。
+              server: '/users/editProduct',
+              // 选择文件的按钮。可选。
+              // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+              pick: {
+                id : '#picker',
+                multiple : false
+              },
+              accept:{
+                extensions:'zip'
+              },
+              // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+              resize: false
+            });
+            uploader.on( 'fileQueued', function( file ) {
+             $('.webuploader-pick').text(file.name)
+            });
+
+          },500)
         })
         $('.jq-edit-status').click(function(){
           var id = $(this).attr('data-id'),
@@ -281,23 +325,6 @@ html(lang='zh')
             }
           )
         })
-        var uploader = WebUploader.create({
-          // swf文件路径
-          swf:'/lib/fex-webuploader/dist/Uploader.swf',
-          // 文件接收服务端。
-          server: '/users/editProduct',
-          // 选择文件的按钮。可选。
-          // 内部根据当前运行是创建，可能是input元素，也可能是flash.
-          pick: {
-            id : '#picker',
-            multiple : false
-          },
-          accept:{
-            extensions:'zip'
-          },
-          // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
-          resize: false
-        });
         //- $('.jq-edit-list').click(function(){
         //-   var _id = $(this).attr('data-id'),
         //-       name = $(this).parent().siblings('.jq-list-name').text();
@@ -364,6 +391,8 @@ html(lang='zh')
           //-       }
           //-   }
           //- )
+
+
           uploader.on( 'uploadProgress', function( file, percentage ) {
             $('.webuploader-pick').text('上传中···')
           });

@@ -9,7 +9,8 @@ $(document).ready(function(){
 	$('.data-table').dataTable({
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers",
-		"sDom": '<""l>t<"F"fp>'
+		"sDom": '<""l>t<"F"fp>',
+		"aaSorting": [[0,'desc']]
 	});
 	
 	// var checkboxClass = 'icheckbox_flat-blue';
