@@ -9,9 +9,11 @@ var _ = require('underscore');
 var formidable = require("formidable");
 var fs = require('fs');
 var unzip = require('unzip');
+var encoding = require('encoding');
 var usermodel = require('../models/users');
 var productmodel = require('../models/products');
 var listmodel = require('../models/list');
+
 
 var form = new formidable.IncomingForm();
 form.uploadDir = path.join(__dirname, '../tmp');
@@ -22,7 +24,6 @@ function md5(str){
   //console.log(d2);
   return d2;
 }
-
 /* 用户模块 */
 router.get('/', function(req, res, next) {
   var queryId = req.query.i || '',queryName = req.query.n;
@@ -38,7 +39,7 @@ router.get('/', function(req, res, next) {
         }
         //console.log(product);
         if(queryId == ''){
-          productmodel.find(function(err,product){
+          productmodel.findByAuthor(name,function(err,product){
             if(err){
               console.log(err);
             }
@@ -77,6 +78,7 @@ router.post('/editList',function(req, res, next) {
   var name = req.cookies.name;
   var connectid = req.cookies['connect.id'];
   var singename = req.cookies['name_sig'];
+  console.log(req.body)
   if(name != undefined){
     if(md5(name+'this_is_mixin_string'+connectid) == singename){
         /* 新增 */
@@ -97,20 +99,18 @@ router.post('/editList',function(req, res, next) {
   }else{
     res.send({status:0,info:'请登录'})
   }
-  //res.status(200).send({'status':0}).end();
 });
 router.post('/editProduct',function(req, res, next) {
-  form.parse(req, function(err, fields, files) {
-      console.log(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop()));
-      fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop())).pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()) }));
+  
       /* 包含新增 */
       var name = req.cookies.name;
       var connectid = req.cookies['connect.id'];
       var singename = req.cookies['name_sig'];
       if(name != undefined){
         if(md5(name+'this_is_mixin_string'+connectid) == singename){
+          form.parse(req, function(err, fields, files) {
             /* 新增 */
-            //console.log(req.body)
+            fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop())).pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()) }));
             _product = new productmodel({
               info       : {
                 id       : fields.infoId,
@@ -124,20 +124,29 @@ router.post('/editProduct',function(req, res, next) {
               fs_path    : files.file.path,
               url        : '/web/'+files.file.path.split('/').pop()+'/index.html'
             })
-            console.log(_product);
-            _product.save(function(err, user){
+            _product.save(function(err, product){
+              console.log('添加');
+              console.log(err);
+              console.log(product);
+              console.log('....');
               if(err){
                 console.log(err);
+                console.log('以上是错误信息')
+                res.status(200).send({status:0,info:'添加失败'}).end();
               }
-              res.send({status:1,info:'添加成功'});
+              if(product){
+                console.log('???')
+                res.status(200).end();
+              }
             })
+          });
         }else{
-          res.redirect('/users/login')
+          res.redirect('/users/login').end()
         }
       }else{
-        res.send({status:0,info:'请登录'})
+        res.send({status:0,info:'请登录'}).end()
       }
-  });
+
 });
 router.post('/editStatus',function(req, res, next) {
   /* 包含新增和修改 */

@@ -56,7 +56,7 @@ $(document).ready(function(){
         $(this).text(formatTime(time,true));
     }
   })
-  $('.dataTables_paginate .ui-button').click(function(){
+  $('.dataTables_paginate .ui-button,.dataTables_length select').click(function(){
     $('.re-time').each(function(){
       var time = $(this).attr('data-time');
       if($(this).hasClass('no-hour')){
@@ -151,7 +151,7 @@ $(document).ready(function(){
   $('.jq-submit-list').click(function(){
     var id = $('input[name=listId]').val(),
         name = $('input[name=listName]').val();
-    if(name = $('input[name=listName]').val() == ''){
+    if($('input[name=listName]').val() == ''){
     	alert('请填写项目名称')
     	return false;
     }
@@ -213,9 +213,11 @@ $(document).ready(function(){
     });
 
     // 文件上传成功，给item添加成功class, 用样式标记上传成功。
-    uploader.on( 'uploadSuccess', function( file ) {
+    uploader.on( 'uploadSuccess', function( file , response ) {
       $('.webuploader-pick').text('上传成功')
-      window.location.reload();
+      console.log(response);
+    	uploader.reset();
+    	window.location.reload();
     });
 
     // 文件上传失败，显示上传出错。

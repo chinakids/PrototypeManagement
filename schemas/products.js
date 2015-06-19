@@ -9,7 +9,7 @@ var ProductSchema = new mongoose.Schema({
     name     : String
   },
   version    : String,
-  codeVersion: Number,
+  codeVersion: String,
   status     : Number,
   author     : String,
   url        : String,
@@ -51,6 +51,12 @@ ProductSchema.statics = {
   findBy : function(id,cb){
     return this
       .find({_id:id})
+      .sort('meta.updateAt')
+      .exec(cb);
+  },
+  findByAuthor : function(id,cb){
+    return this
+      .find({author:id})
       .sort('meta.updateAt')
       .exec(cb);
   },
