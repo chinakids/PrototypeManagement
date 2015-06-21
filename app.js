@@ -7,7 +7,6 @@ var bodyParser   = require('body-parser');
 var session      = require('express-session');
 var redisStore   = require('connect-redis')(session);
 var mongoose     = require('mongoose');
-
 var routes       = require('./routes/index');
 var users        = require('./routes/users');
 
