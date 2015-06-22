@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
   var singename = req.cookies['name_sig'];
   console.log(queryId);
   if(name != undefined){
-    if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
+    if(rule.pw(name,connectid,singename)){
       listmodel.find(function(err,list){
         if(err){
           console.log(err);
@@ -74,7 +74,7 @@ router.post('/editList',function(req, res, next) {
   var singename = req.cookies['name_sig'];
   console.log(req.body)
   if(name != undefined){
-    if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
+    if(rule.pw(name,connectid,singename)){
         /* 新增 */
         //console.log(req.body)
         _list = new listmodel({
@@ -101,7 +101,7 @@ router.post('/editProduct',function(req, res, next) {
       var connectid = req.cookies['connect.id'];
       var singename = req.cookies['name_sig'];
       if(name != undefined){
-        if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
+        if(rule.pw(name,connectid,singename)){
           form.parse(req, function(err, fields, files) {
             /* 新增 */
             fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop())).pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()) }));
@@ -148,7 +148,7 @@ router.post('/editStatus',function(req, res, next) {
   var connectid = req.cookies['connect.id'];
   var singename = req.cookies['name_sig'];
   if(name != undefined){
-    if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
+    if(rule.pw(name,connectid,singename)){
         //console.log('修改')
         /* 修改 */
         var newObj = {
@@ -184,7 +184,7 @@ router.get('/login', function(req, res, next) {
   var connectid = req.cookies['connect.id'];
   var singename = req.cookies['name_sig'];
   if(name != undefined){
-    if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
+    if(rule.pw(name,connectid,singename)){
       res.redirect('/users');
     }else{
       res.render('login', { title: 'logins' });

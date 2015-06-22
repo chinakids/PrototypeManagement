@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
     }
     //console.log(product)
     if(name != undefined){
-      if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
+      if(rule.pw(name,connectid,singename)){
         usermodel.findByName(name,function(err,user){
           if(err){
             console.log(err);
