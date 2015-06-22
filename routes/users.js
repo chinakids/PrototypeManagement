@@ -15,8 +15,14 @@ var productmodel = require('../models/products');
 var listmodel = require('../models/list');
 
 
-var form = new formidable.IncomingForm();
-form.uploadDir = path.join(__dirname, '../tmp');
+function writeFile(files){
+  var zip = fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop()));
+  zip.pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop())}));
+  zip.on('end', function() {
+    zip.unpipe(path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()));
+  });
+}
+
 
 /* 用户模块 */
 router.get('/', function(req, res, next) {
@@ -24,7 +30,7 @@ router.get('/', function(req, res, next) {
   var name = req.cookies.name;
   var connectid = req.cookies['connect.id'];
   var singename = req.cookies['name_sig'];
-  console.log(queryId);
+  //console.log(queryId);
   if(name != undefined){
     if(rule.pw(name,connectid,singename)){
       listmodel.find(function(err,list){
@@ -65,6 +71,7 @@ router.get('/', function(req, res, next) {
   }else{
     res.redirect('/users/login')
   }
+  console.log('users')
 });
 /* 用户数据提交 */
 router.post('/editList',function(req, res, next) {
@@ -95,16 +102,19 @@ router.post('/editList',function(req, res, next) {
   }
 });
 router.post('/editProduct',function(req, res, next) {
-  
       /* 包含新增 */
       var name = req.cookies.name;
       var connectid = req.cookies['connect.id'];
       var singename = req.cookies['name_sig'];
+      var unm = 0;
       if(name != undefined){
         if(rule.pw(name,connectid,singename)){
+          var form = new formidable.IncomingForm();
+          form.uploadDir = path.join(__dirname, '../tmp');
           form.parse(req, function(err, fields, files) {
-            /* 新增 */
-            fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop())).pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()) }));
+
+            writeFile(files);
+
             _product = new productmodel({
               info       : {
                 id       : fields.infoId,
@@ -119,13 +129,7 @@ router.post('/editProduct',function(req, res, next) {
               url        : '/web/'+files.file.path.split('/').pop()+'/index.html'
             })
             _product.save(function(err, product){
-              console.log('添加');
-              console.log(err);
-              console.log(product);
-              console.log('....');
               if(err){
-                console.log(err);
-                console.log('以上是错误信息')
                 res.status(200).send({status:0,info:'添加失败'}).end();
               }
               if(product){
@@ -192,6 +196,7 @@ router.get('/login', function(req, res, next) {
   }else{
     res.render('login', { title: 'logins' });
   }
+  console.log('login')
 });
 router.post('/login', function(req, res, next) {
   /* 查询用户名并验证密码 */
