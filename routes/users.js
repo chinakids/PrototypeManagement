@@ -3,7 +3,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var router = express.Router();
-var crypto = require('crypto');
+var rule = require('../tools/rule');
 var querystring = require('querystring');
 var _ = require('underscore');
 var formidable = require("formidable");
@@ -17,13 +17,7 @@ var listmodel = require('../models/list');
 
 var form = new formidable.IncomingForm();
 form.uploadDir = path.join(__dirname, '../tmp');
-/* md5加密 */
-function md5(str){
-  var md5 = crypto.createHash('md5');
-  var d2 = md5.update(str).digest('hex');
-  //console.log(d2);
-  return d2;
-}
+
 /* 用户模块 */
 router.get('/', function(req, res, next) {
   var queryId = req.query.i || '',queryName = req.query.n;
@@ -32,7 +26,7 @@ router.get('/', function(req, res, next) {
   var singename = req.cookies['name_sig'];
   console.log(queryId);
   if(name != undefined){
-    if(md5(name+'this_is_mixin_string'+connectid) == singename){
+    if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
       listmodel.find(function(err,list){
         if(err){
           console.log(err);
@@ -80,7 +74,7 @@ router.post('/editList',function(req, res, next) {
   var singename = req.cookies['name_sig'];
   console.log(req.body)
   if(name != undefined){
-    if(md5(name+'this_is_mixin_string'+connectid) == singename){
+    if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
         /* 新增 */
         //console.log(req.body)
         _list = new listmodel({
@@ -107,7 +101,7 @@ router.post('/editProduct',function(req, res, next) {
       var connectid = req.cookies['connect.id'];
       var singename = req.cookies['name_sig'];
       if(name != undefined){
-        if(md5(name+'this_is_mixin_string'+connectid) == singename){
+        if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
           form.parse(req, function(err, fields, files) {
             /* 新增 */
             fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop())).pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()) }));
@@ -154,7 +148,7 @@ router.post('/editStatus',function(req, res, next) {
   var connectid = req.cookies['connect.id'];
   var singename = req.cookies['name_sig'];
   if(name != undefined){
-    if(md5(name+'this_is_mixin_string'+connectid) == singename){
+    if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
         //console.log('修改')
         /* 修改 */
         var newObj = {
@@ -190,7 +184,7 @@ router.get('/login', function(req, res, next) {
   var connectid = req.cookies['connect.id'];
   var singename = req.cookies['name_sig'];
   if(name != undefined){
-    if(md5(name+'this_is_mixin_string'+connectid) == singename){
+    if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
       res.redirect('/users');
     }else{
       res.render('login', { title: 'logins' });
@@ -209,10 +203,10 @@ router.post('/login', function(req, res, next) {
     if(user.length<=0){
       res.status(200).send({status:0,info:'帐号或密码错误'});
     }else{
-      if(md5(req.body.password) == user[0].passWord){
+      if(rule.md5(req.body.password) == user[0].passWord){
         /* 设置登陆的cookie */
         res.cookie('name', user[0].name , { maxAge: 60 * 1000 * 60 * 24 * 30 });
-        res.cookie('name_sig', md5(user[0].name+'this_is_mixin_string'+req.cookies['connect.id']) , { maxAge: 60 * 1000 * 60 * 24 * 30 });
+        res.cookie('name_sig', rule.md5(user[0].name+'this_is_mixin_string'+req.cookies['connect.id']) , { maxAge: 60 * 1000 * 60 * 24 * 30 });
         res.status(200).send({status:1,data:{name:user[0].name}});
       }else{
         res.status(200).send({status:0,info:'帐号或密码错误'});
@@ -233,7 +227,7 @@ router.get('/register', function(req, res, next) {
 router.post('/register', function(req, res, next) {
   var userObj = req.body;
   var _user;
-  userObj.password = md5(userObj.password);
+  userObj.password = rule.md5(userObj.password);
   /* 存入数据,先判断是否存在用户 */
   usermodel.findByName(userObj.username,function(err,user){
     if(err){

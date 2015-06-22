@@ -1,18 +1,10 @@
 var express = require('express');
-var crypto = require('crypto');
+var rule = require('../tools/rule');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var usermodel = require('../models/users');
 var productmodel = require('../models/products');
 var router = express.Router();
-
-/* md5加密 */
-function md5(str){
-  var md5 = crypto.createHash('md5');
-  var d2 = md5.update(str).digest('hex');
-  //console.log(d2);
-  return d2;
-}
 
 /* 列表展示项目以及演示地址 */
 router.get('/', function(req, res, next) {
@@ -28,7 +20,7 @@ router.get('/', function(req, res, next) {
     }
     //console.log(product)
     if(name != undefined){
-      if(md5(name+'this_is_mixin_string'+connectid) == singename){
+      if(rule.md5(name+'this_is_mixin_string'+connectid) == singename){
         usermodel.findByName(name,function(err,user){
           if(err){
             console.log(err);
