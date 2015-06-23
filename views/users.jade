@@ -78,7 +78,7 @@ html(lang='zh')
                       tr
                         td.jq-list-name(data-id="#{item._id}") #{item.name}
                         td.text-center
-                          a(href="?i=#{item._id}&n=#{item.name}",data-id="#{item._id}") 查看原型
+                          a(href="?i=#{item._id}&n=#{item.name}",data-id="#{item._id}") 我的原型
           .col-xs-9
             .widget-box
               .widget-title
@@ -118,9 +118,12 @@ html(lang='zh')
                             span.badge(title="最后修改:\n#{item.meta.updateAt}") 未知
                         td #{item.author}
                         td.text-center
-                          a.jq-edit-status(href="#edit-status",data-toggle="modal",target="_blank",data-id="#{item._id}",data-status="#{item.status}") 修改状态
-                          | &nbsp;&nbsp;|&nbsp;&nbsp;
-                          a(href="#{item.url}",target="_blank") 查看
+                          if item.status != 3
+                            a.jq-edit-status(href="#edit-status",data-toggle="modal",target="_blank",data-id="#{item._id}",data-status="#{item.status}") 修改状态
+                            | &nbsp;&nbsp;|&nbsp;&nbsp;
+                            a(href="/pr?pr=#{item.info.id}",target="_blank") 查看
+                          else
+                            a(href="/pr?pr=#{item.info.id}",target="_blank") 查看
       div#add-list.modal.fade
         div.modal-dialog
           div.modal-content

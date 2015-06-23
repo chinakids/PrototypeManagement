@@ -9,6 +9,7 @@ var redisStore   = require('connect-redis')(session);
 var mongoose     = require('mongoose');
 var routes       = require('./routes/index');
 var users        = require('./routes/users');
+var pr           = require('./routes/pr');
 
 mongoose.connect('mongodb://127.0.0.1:27017/test');
 
@@ -53,6 +54,7 @@ app.use(session({
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/pr', pr);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

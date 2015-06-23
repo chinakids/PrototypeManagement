@@ -12,8 +12,8 @@ var ProductSchema = new mongoose.Schema({
   codeVersion: String,
   status     : Number,
   author     : String,
-  url        : String,
   fs_name    : String,
+  url        : String,
   fs_path    : String,
   meta       : {
     createAt : {
@@ -63,6 +63,12 @@ ProductSchema.statics = {
   findByListId : function(key,cb){
     return this
       .find({'info.id':key})
+      .sort('meta.updateAt')
+      .exec(cb);
+  },
+  findNewPr : function(key,cb){
+    return this
+      .find({'info.id':key,status:1})
       .sort('meta.updateAt')
       .exec(cb);
   }
