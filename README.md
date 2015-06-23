@@ -1,4 +1,4 @@
-# 产品原型(HTML)管理工具 v1.0.0
+# 产品原型(HTML)管理工具 v1.1.0
 一个产品原型(HTML)管理工具基于nodejs&amp;mongodb&amp;redis
 
 [![npm version](https://badge.fury.io/js/engine.io.svg)](http://badge.fury.io/js/engine.io)
@@ -45,11 +45,15 @@
 
 - 未做录入表单数据格式验证
 - 后台流程未整理
-- ~~添加产品第二次会重复录入(new form位置的问题)~~
-- window下压缩文件在unix环境下解压乱码
+- ~~添加产品第二次会重复录入~~(new form位置的问题)
+- ~~window下压缩文件在unix环境下解压乱码~~(通过外挂python解压的方式解决)
 - 其他未知问题
 
 ###5.PR说明
 - 欢迎各种PR
 - 提交代码一定要说清楚修改哦~
 
+
+###6.更新说明
+##### V1.1.0(2015-06-23)
+- 第一版可用版本发布
