@@ -9,19 +9,18 @@ var _ = require('underscore');
 var formidable = require("formidable");
 var fs = require('fs');
 var unzip = require('unzip');
-var encoding = require('encoding');
 var usermodel = require('../models/users');
 var productmodel = require('../models/products');
-var listmodel = require('../models/list');
+var listmodel = require('../models/list')
+var cmd = require('../tools/cmd');
 
-
-function writeFile(files){
-  var zip = fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop()));
-  zip.pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop())}));
-  zip.on('end', function() {
-    zip.unpipe(path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()));
-  });
-}
+// function writeFile(files){
+//   var zip = fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop()));
+//   zip.pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop())}));
+//   zip.on('end', function() {
+//     zip.unpipe(path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()));
+//   });
+// }
 
 
 /* 用户模块 */
@@ -113,7 +112,10 @@ router.post('/editProduct',function(req, res, next) {
           form.uploadDir = path.join(__dirname, '../tmp');
           form.parse(req, function(err, fields, files) {
 
-            writeFile(files);
+            //writeFile(files);
+            var input = path.join(__dirname, '../tmp/'+files.file.path.split('/').pop());
+            var output = path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()+'/');
+            cmd.unzip(input,output);
 
             _product = new productmodel({
               info       : {

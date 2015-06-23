@@ -215,8 +215,6 @@ $(document).ready(function(){
     // 文件上传成功，给item添加成功class, 用样式标记上传成功。
     uploader.on( 'uploadSuccess', function( file , response ) {
       $('.webuploader-pick').text('上传成功')
-      console.log(file);
-      alert(file)
     	uploader.reset();
     	window.location.reload();
     });
