@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
             console.log(err);
           }
           if(user.length <= 0){
-            // 数据库被删除，避免页面错误
+            // 数据库没用户却存在cookies的情况....虽然少见，但是...
             res.clearCookie('name');
             res.clearCookie('name_sig');
             res.render('index', {
