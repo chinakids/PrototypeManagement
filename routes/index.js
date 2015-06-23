@@ -25,12 +25,22 @@ router.get('/', function(req, res, next) {
           if(err){
             console.log(err);
           }
-          console.log(user)
-          res.render('index', {
-            title : '全部产品原型列表',
-            data  : product,
-            login : user[0]
-          });
+          if(user.length <= 0){
+            // 数据库被删除，避免页面错误
+            res.clearCookie('name');
+            res.clearCookie('name_sig');
+            res.render('index', {
+              title : '全部产品原型列表',
+              data  : product,
+              login : false
+            });
+          }else{
+            res.render('index', {
+              title : '全部产品原型列表',
+              data  : product,
+              login : user[0]
+            });
+          }
         })
       }else{
         res.render('index', {
