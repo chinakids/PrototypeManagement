@@ -44,7 +44,7 @@ $(document).ready(function(){
     if(bool){
       str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 "+(parseInt(t.getHours())<10 ? ('0'+t.getHours()) : t.getHours())+":"+(parseInt(t.getMinutes())<10 ? ('0'+t.getMinutes()) : t.getMinutes());
     }else{
-    str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 ";
+      str = t.getFullYear() +"年"+(t.getMonth()+1)+"月"+t.getDate()+"日 ";
     }
     return str;
   }
@@ -56,7 +56,8 @@ $(document).ready(function(){
         $(this).text(formatTime(time,true));
     }
   })
-  $('.dataTables_paginate .ui-button,.dataTables_length select').click(function(){
+  $(document).on('click','.dataTables_paginate .ui-button,.dataTables_length select',function(){
+    alert(1);
     $('.re-time').each(function(){
       var time = $(this).attr('data-time');
       if($(this).hasClass('no-hour')){

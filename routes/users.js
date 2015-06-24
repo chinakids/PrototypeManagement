@@ -9,6 +9,7 @@ var _ = require('underscore');
 var formidable = require("formidable");
 var fs = require('fs');
 var unzip = require('unzip');
+var moment = require('moment');
 var usermodel = require('../models/users');
 var productmodel = require('../models/products');
 var listmodel = require('../models/list')
@@ -51,13 +52,13 @@ router.get('/', function(req, res, next) {
           })
         }else{
           console.log('start')
-          productmodel.findByListId(queryId,function(err,product){
+          productmodel.userFindByListId(name,queryId,function(err,product){
             if(err){
               console.log(err);
             }
             console.log(product);
             res.render('users', {
-              title : queryName+'原型列表',
+              title : '您的'+queryName+'原型列表',
               data  : product,
               list  : list
             });

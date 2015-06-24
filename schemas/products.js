@@ -71,6 +71,12 @@ ProductSchema.statics = {
       .find({'info.id':key,status:1})
       .sort('meta.updateAt')
       .exec(cb);
+  },
+  userFindByListId : function(user,key,cb){
+    return this
+      .find({'info.id':key,author:user})
+      .sort('meta.updateAt')
+      .exec(cb);
   }
 }
 

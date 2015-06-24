@@ -87,7 +87,7 @@ html(lang='zh')
                             span.badge(title="最后修改:\n#{item.meta.updateAt}") 未知
                         td #{item.author}
                         td.text-center
-                          a(href="#{item.url}",target="_blank") 查看
+                          a(href="/pr?pr=#{item.info.id}",target="_blank") 查看
       .row
         #footer.col-xs-12
           | 2012 - 2013 &copy; Unicorn Admin. Brought to you by
