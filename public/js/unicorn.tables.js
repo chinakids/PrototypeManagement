@@ -57,7 +57,6 @@ $(document).ready(function(){
     }
   })
   $(document).on('click','.dataTables_paginate .ui-button,.dataTables_length select',function(){
-    alert(1);
     $('.re-time').each(function(){
       var time = $(this).attr('data-time');
       if($(this).hasClass('no-hour')){
