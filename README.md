@@ -1,10 +1,10 @@
 # 产品原型(HTML)管理工具 v1.1.0
 
-[![Join the chat at https://gitter.im/chinakids/PrototypeManagement](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/chinakids/PrototypeManagement?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 一个产品原型(HTML)管理工具基于nodejs&amp;mongodb&amp;redis
 
 [![npm version](https://badge.fury.io/js/engine.io.svg)](http://badge.fury.io/js/engine.io)
 [![Build Status](https://travis-ci.org/chinakids/PrototypeManagement.svg?branch=master)](https://travis-ci.org/chinakids/PrototypeManagement)
+[![Join the chat at https://gitter.im/chinakids/PrototypeManagement](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/chinakids/PrototypeManagement?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ###1.安装
 
