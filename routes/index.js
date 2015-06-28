@@ -12,7 +12,6 @@ router.get('/', function(req, res, next) {
   var name = req.cookies.name;
   var connectid = req.cookies['connect.id'];
   var singename = req.cookies['name_sig'];
-
   /* 查找数据 */
   productmodel.find(function(err,product){
     if(err){
