@@ -8,20 +8,11 @@ var querystring = require('querystring');
 var _ = require('underscore');
 var formidable = require("formidable");
 var fs = require('fs');
-var unzip = require('unzip');
 var moment = require('moment');
 var usermodel = require('../models/users');
 var productmodel = require('../models/products');
 var listmodel = require('../models/list')
 var cmd = require('../tools/cmd');
-
-// function writeFile(files){
-//   var zip = fs.createReadStream(path.join(__dirname, '../tmp/'+files.file.path.split('/').pop()));
-//   zip.pipe(unzip.Extract({ path: path.join(__dirname, '../public/web/'+files.file.path.split('/').pop())}));
-//   zip.on('end', function() {
-//     zip.unpipe(path.join(__dirname, '../public/web/'+files.file.path.split('/').pop()));
-//   });
-// }
 
 
 /* 用户模块 */
